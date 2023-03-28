@@ -1,5 +1,6 @@
 package com.lumtec.computo;
 
+import ConexionBD.Conexion;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -9,22 +10,25 @@ import javax.swing.JTable;
 public class HerramientasTabla {
 
     public void eliminarId(String tableName, JTable tabla, Connection con, PreparedStatement pps) {
-        int y = tabla.getSelectedRow();
-        int id = Integer.parseInt(tabla.getValueAt(y, 0).toString());
 
-        int eliminar = JOptionPane.showConfirmDialog(tabla, "¿Eliminar Campo?");
+        String nombreColuma = "NOMBRE"; //Nomre de la columna, en la que se buscará el campo a eliminar
+        int y = tabla.getSelectedRow();
+        String nombre = tabla.getValueAt(y, 0).toString();
+        System.out.println(nombre);
+
+        int eliminar = JOptionPane.showConfirmDialog(null, "¿Eliminar Campo?");
 
         if (eliminar == 0) {
             try {
-                con = test.getConnection();
-                pps = con.prepareStatement("DELETE FROM " + tableName + " WHERE id_producto = '" + id + "'");
+                con = Conexion.getConnection();
+                pps = con.prepareStatement("DELETE FROM " + tableName + " WHERE " + nombreColuma + " = '" + nombre + "'");
                 pps.executeUpdate();
                 JOptionPane.showMessageDialog(null, "Faltante Eliminado");
             } catch (SQLException ex) {
                 ex.printStackTrace(System.out);
             } finally {
-                test.close(con);
-                test.close(pps);
+                Conexion.close(con);
+                Conexion.close(pps);
             }
         } else {
 

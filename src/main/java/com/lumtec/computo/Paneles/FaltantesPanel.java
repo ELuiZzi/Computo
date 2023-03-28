@@ -7,8 +7,7 @@ import com.lumtec.computo.Faltantes.FaltantesDAOJDBC;
 import com.lumtec.computo.HerramientasTabla;
 import com.lumtec.computo.Inventario.InventarioDAO;
 import com.lumtec.computo.Inventario.InventarioDAOJDBC;
-import com.lumtec.computo.IrA;
-import com.lumtec.computo.test;
+import ConexionBD.Conexion;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
@@ -36,7 +35,6 @@ public class FaltantesPanel extends javax.swing.JPanel {
     PreparedStatement pps;
     ResultSet rs;
     String[] datos;
-    IrA a;
     Faltante falt;
 
     Font Arial = new java.awt.Font("Arial", 0, 12);
@@ -65,16 +63,6 @@ public class FaltantesPanel extends javax.swing.JPanel {
 
         Panel1.setMinimumSize(new java.awt.Dimension(860, 410));
         Panel1.setPreferredSize(new java.awt.Dimension(860, 410));
-        Panel1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                Panel1MouseClicked(evt);
-            }
-        });
-        Panel1.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                Panel1KeyPressed(evt);
-            }
-        });
         Panel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         tablaFaltantes.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
@@ -131,11 +119,6 @@ public class FaltantesPanel extends javax.swing.JPanel {
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jPanel2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jPanel2MouseClicked(evt);
-            }
-        });
         Panel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 366, 37, 37));
 
         add(Panel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 860, 410));
@@ -150,17 +133,12 @@ public class FaltantesPanel extends javax.swing.JPanel {
             conf = new HerramientasTabla();
             int del = JOptionPane.showConfirmDialog(null, "¿Seguro que deseas eliminar el Producto?", "Elimnar Producto", JOptionPane.YES_NO_OPTION);
             if (del == 0) {
-                try {
-                    con = test.getConnection();
-                    conf.eliminarId("faltantes", tablaFaltantes, con, pps);
-                    rellenarTabla();
-                    vaciarTabla(tablaProvedores);
-                    rellenarTablaProvedores();
-                } catch (SQLException ex) {
-
-                } finally {
-                    test.close(con);
-                }
+                con = Conexion.getConnection();
+                conf.eliminarId("faltantes", tablaFaltantes, con, pps);
+                rellenarTabla();
+                vaciarTabla(tablaProvedores);
+                rellenarTablaProvedores();
+                Conexion.close(con);
 
             }
         } else if (evt.getKeyCode() == KeyEvent.VK_S) {
@@ -173,22 +151,6 @@ public class FaltantesPanel extends javax.swing.JPanel {
 
         }
     }//GEN-LAST:event_tablaFaltantesKeyPressed
-
-    private void Panel1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_Panel1KeyPressed
-        if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            a = new IrA();
-            a.computo();
-        }
-    }//GEN-LAST:event_Panel1KeyPressed
-
-    private void Panel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Panel1MouseClicked
-        Panel1.requestFocus();
-    }//GEN-LAST:event_Panel1MouseClicked
-
-    private void jPanel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MouseClicked
-        a = new IrA();
-        a.nuevoFaltante();
-    }//GEN-LAST:event_jPanel2MouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -245,7 +207,7 @@ public class FaltantesPanel extends javax.swing.JPanel {
         tablaFaltantes.setRowHeight(17);
 
         try {
-            con = test.getConnection();
+            con = Conexion.getConnection();
             pps = con.prepareStatement("SELECT * FROM faltantes");
             rs = pps.executeQuery();
             while (rs.next()) {
@@ -262,8 +224,8 @@ public class FaltantesPanel extends javax.swing.JPanel {
         } catch (SQLException ex) {
             ex.printStackTrace(System.out);
         } finally {
-            test.close(pps);
-            test.close(rs);
+            Conexion.close(pps);
+            Conexion.close(rs);
         }
 
     }
@@ -281,7 +243,7 @@ public class FaltantesPanel extends javax.swing.JPanel {
 
         try {
             //Conexion abierta en método porque es temporal
-            con = test.getConnection();
+            con = Conexion.getConnection();
             pps = con.prepareStatement("SELECT * FROM faltantes");
             rs = pps.executeQuery();
 
@@ -312,8 +274,8 @@ public class FaltantesPanel extends javax.swing.JPanel {
         } catch (SQLException ex) {
 
         } finally {
-            test.close(pps);
-            test.close(rs);
+            Conexion.close(pps);
+            Conexion.close(rs);
         }
 
     }
@@ -377,37 +339,22 @@ public class FaltantesPanel extends javax.swing.JPanel {
 
         //Haremos un try-catch para iniziar los métodos con la misma conexión,en caso de que haya un error, haremos Rollback. 
         Connection cone = null;
-        try {
-            cone = test.getConnection();
-
-            inve = new InventarioDAOJDBC(cone);
-            fal = new FaltantesDAOJDBC(cone);
-
-            //Actualizamos Inventario, sumando los nuevos productos
-            inve.surtir(id, cantidadTotalInve);
-
-            //Actualizamos Faltantes, restando los nuevos productos
-            fal.editarCantidad(id, cantidadTotalFalt);
-
-            //Una vez actualizadas las BD, y aprovechando la conexion, verificaremos si la cantidad actual del producto en Faltantes es menor a 0, en caso de que lo sea, se tendrá que eliminar
-            if (fal.getCantidad(id) <= 0) {
-                fal.eliminarFaltante(id);
-            }
-
-            //Finalmente rellenamos las tablas con los nuevos cambios
-            rellenarTabla();
-            vaciarTabla(tablaProvedores);
-            rellenarTablaProvedores();
-
-        } catch (SQLException ex) {
-            try {
-                con.rollback();
-            } catch (SQLException ex1) {
-                System.out.println("Hubo un error en el metodo surtir(), actualizando las bases de datos");
-            }
-        } finally {
-            test.close(cone);
+        cone = Conexion.getConnection();
+        inve = new InventarioDAOJDBC(cone);
+        fal = new FaltantesDAOJDBC(cone);
+        //Actualizamos Inventario, sumando los nuevos productos
+        inve.surtir(id, cantidadTotalInve);
+        //Actualizamos Faltantes, restando los nuevos productos
+        fal.editarCantidad(id, cantidadTotalFalt);
+        //Una vez actualizadas las BD, y aprovechando la conexion, verificaremos si la cantidad actual del producto en Faltantes es menor a 0, en caso de que lo sea, se tendrá que eliminar
+        if (fal.getCantidad(id) <= 0) {
+            fal.eliminarFaltante(id);
         }
+        //Finalmente rellenamos las tablas con los nuevos cambios
+        rellenarTabla();
+        vaciarTabla(tablaProvedores);
+        rellenarTablaProvedores();
+        Conexion.close(cone);
 
     }
 
@@ -417,15 +364,10 @@ public class FaltantesPanel extends javax.swing.JPanel {
 
     private void rellenarTablas() {
 
-        try {
-            con = test.getConnection();
-            rellenarTabla();
-            rellenarTablaProvedores();
-        } catch (SQLException e) {
-
-        } finally {
-            test.close(con);
-        }
+        con = Conexion.getConnection();
+        rellenarTabla();
+        rellenarTablaProvedores();
+        Conexion.close(con);
 
     }
 

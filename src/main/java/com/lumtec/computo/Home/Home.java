@@ -4,15 +4,20 @@ import com.lumtec.computo.Colors;
 import com.lumtec.computo.Imagenes.Images;
 import com.lumtec.computo.Paneles.ComputoPanel;
 import com.lumtec.computo.Producto;
-import com.lumtec.computo.goTo;
-import com.lumtec.computo.test;
+import com.lumtec.computo.Go;
+import ConexionBD.Conexion;
+import com.lumtec.computo.Paneles.AgregarProductoPanel;
+import com.lumtec.computo.Paneles.EditarPanel;
+import com.lumtec.computo.Paneles.FaltantesPanel;
+import com.lumtec.computo.Paneles.FinanzasPanel;
+import com.lumtec.computo.Paneles.InventarioPanel;
+import com.lumtec.computo.Paneles.VenderPanel;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
-import java.sql.SQLException;
 import javax.swing.JPanel;
 import org.netbeans.lib.awtextra.AbsoluteConstraints;
 import org.netbeans.lib.awtextra.AbsoluteLayout;
@@ -25,8 +30,6 @@ public class Home extends javax.swing.JFrame {
     AbsoluteLayout layout = new AbsoluteLayout();
 
     //Creacion de goto, nos permite cambiar el contenido
-    goTo go = new goTo();
-
     //Variables que almacenan las coordenadas originales al mover la ventana
     int x, y;
 
@@ -38,13 +41,8 @@ public class Home extends javax.swing.JFrame {
 
         //Accedemos a  la base de datos, para precargar
         Connection con = null;
-        try {
-            con = test.getConnection();
-        } catch (SQLException ex) {
-            tituloVentana.setText("Error de conexión");
-        } finally {
-            test.close(con);
-        }
+        con = Conexion.getConnection();
+        Conexion.close(con);
 
         initComponents();
         initOwnComponents();
@@ -53,7 +51,6 @@ public class Home extends javax.swing.JFrame {
         background.requestFocus();
         minBoton();
 
-        
     }
 
     public Home(String h) {
@@ -215,7 +212,7 @@ public class Home extends javax.swing.JFrame {
         cerrarButton.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
         cerrarButton.setForeground(new java.awt.Color(255, 255, 255));
         cerrarButton.setText("Cerrar");
-        cerrarButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        cerrarButton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         cerrarButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 cerrarButtonMouseClicked(evt);
@@ -359,7 +356,7 @@ public class Home extends javax.swing.JFrame {
     private void computoButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_computoButtonMouseClicked
         prod.reset();
         minimizarMenu();
-        go.computo();
+        Go.to(Home.computoPanel);
         llenarPanel("computo");
     }//GEN-LAST:event_computoButtonMouseClicked
 
@@ -369,7 +366,7 @@ public class Home extends javax.swing.JFrame {
     }//GEN-LAST:event_lumtecButtonMouseClicked
 
     private void menuTituloMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menuTituloMouseClicked
-        go.home();
+        Go.vaciarPanel();
         setTitulo("Bienvenido Luis");
     }//GEN-LAST:event_menuTituloMouseClicked
 
@@ -471,5 +468,14 @@ public class Home extends javax.swing.JFrame {
 
         contenidoPanel.setBackground(Colors.panel);
     }
+
+    //Cargar Todas las ventanas
+    public static final JPanel computoPanel = new ComputoPanel();
+    public static final JPanel agregarProdutcoPanel = new AgregarProductoPanel();
+    public static final JPanel inventarioPanel = new InventarioPanel();
+    public static final JPanel editarProdutcoPanel = new EditarPanel();
+    public static final JPanel venderProdutcoPanel = new VenderPanel();
+    public static final JPanel faltantesPanel = new FaltantesPanel();
+    public static final JPanel finanzasPanel = new FinanzasPanel();
 
 }

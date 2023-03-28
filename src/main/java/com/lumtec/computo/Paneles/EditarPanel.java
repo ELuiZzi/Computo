@@ -3,9 +3,8 @@ package com.lumtec.computo.Paneles;
 import com.lumtec.computo.Colors;
 import com.lumtec.computo.Imagenes.Images;
 import com.lumtec.computo.Inventario.*;
-import com.lumtec.computo.IrA;
 import com.lumtec.computo.Producto;
-import com.lumtec.computo.test;
+import ConexionBD.Conexion;
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -14,8 +13,7 @@ import org.netbeans.lib.awtextra.AbsoluteConstraints;
 public class EditarPanel extends javax.swing.JPanel {
 
     InventarioDAO inve = new InventarioDAOJDBC();
-    private static float porcentajeTotal, ganancia, reinversion;
-    static IrA a;
+    private static double porcentajeTotal, ganancia, reinversion;
     private final float IVA = .16f;
     private float priceWithIVA = 0;
     Producto prod = new Producto();
@@ -96,16 +94,6 @@ public class EditarPanel extends javax.swing.JPanel {
         editarProductoPanel.setAutoscrolls(true);
         editarProductoPanel.setMinimumSize(new java.awt.Dimension(860, 410));
         editarProductoPanel.setPreferredSize(new java.awt.Dimension(860, 410));
-        editarProductoPanel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                editarProductoPanelMouseClicked(evt);
-            }
-        });
-        editarProductoPanel.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                editarProductoPanelKeyPressed(evt);
-            }
-        });
         editarProductoPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         nombreProductoBox.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
@@ -487,9 +475,9 @@ public class EditarPanel extends javax.swing.JPanel {
     private void sliderPorcentajeStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sliderPorcentajeStateChanged
         porcentajeTotal = sliderPorcentaje.getValue();
 
-        float porcentajeReinversion = porcentajeTotal - getPorcentajeGanancia();
-        porcentajeLabel.setText(Float.toString(porcentajeTotal));
-        porcentajeReinversionBox.setText(Float.toString(porcentajeReinversion));
+        double porcentajeReinversion = porcentajeTotal - getPorcentajeGanancia();
+        porcentajeLabel.setText(Double.toString(porcentajeTotal));
+        porcentajeReinversionBox.setText(Double.toString(porcentajeReinversion));
         calcularPrecioVenta();
         calcularGYR();
 
@@ -533,14 +521,9 @@ public class EditarPanel extends javax.swing.JPanel {
 
             }
 
-            try {
-                con = test.getConnection();
-                inve.actualizar(prod);
-            } catch (SQLException ex) {
-                ex.printStackTrace(System.out);
-            } finally {
-                test.close(con);
-            }
+            con = Conexion.getConnection();
+            inve.actualizar(prod);
+            Conexion.close(con);
         } else {
             /*
             Abrir un cuadro de dialogo que nos pregunte si rellenar el proudcto actual, o cargar el producto que dice la caaja
@@ -566,17 +549,6 @@ public class EditarPanel extends javax.swing.JPanel {
             busquedaBox.selectAll();
         }
     }//GEN-LAST:event_busquedaBoxFocusGained
-
-    private void editarProductoPanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editarProductoPanelMouseClicked
-        editarProductoPanel.requestFocus();
-    }//GEN-LAST:event_editarProductoPanelMouseClicked
-
-    private void editarProductoPanelKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_editarProductoPanelKeyPressed
-        if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            a = new IrA();
-            a.computo();
-        }
-    }//GEN-LAST:event_editarProductoPanelKeyPressed
 
     private void busquedaBoxFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_busquedaBoxFocusLost
         if (busquedaBox.getText().equals("")) {
@@ -723,12 +695,12 @@ public class EditarPanel extends javax.swing.JPanel {
         modeloBox.setText(prod.getModelo());
         colorBox.setText(prod.getColor());
         cantidadBox.setText(Integer.toString(prod.getCantidad()));
-        precioCompraBox.setText(Float.toString(prod.getPrecioCompra()));
-        precioVentaBox.setText(Float.toString(prod.getPrecioVenta()));
-        gananciaBox.setText(Float.toString(prod.getGanancia()));
-        reinversionBox.setText(Float.toString(prod.getReinversion()));
-        porcentajeGananciaBox.setText(Float.toString(prod.getPorcentajeGanancia()));
-        porcentajeReinversionBox.setText(Float.toString(prod.getPorcentajeReinversion()));
+        precioCompraBox.setText(Double.toString(prod.getPrecioCompra()));
+        precioVentaBox.setText(Double.toString(prod.getPrecioVenta()));
+        gananciaBox.setText(Double.toString(prod.getGanancia()));
+        reinversionBox.setText(Double.toString(prod.getReinversion()));
+        porcentajeGananciaBox.setText(Double.toString(prod.getPorcentajeGanancia()));
+        porcentajeReinversionBox.setText(Double.toString(prod.getPorcentajeReinversion()));
         sliderPorcentaje.setValue((int) porcentajeTotal);
         descripcionBox.setText(prod.getDescripcion());
         provedorBox.setText(prod.getProvedor());
@@ -776,18 +748,18 @@ public class EditarPanel extends javax.swing.JPanel {
 
         float porcentajeGanancia = Float.parseFloat(porcentajeGananciaBox.getText());
 
-        float porcentajeReinversion = porcentajeTotal - porcentajeGanancia;
+        double porcentajeReinversion = porcentajeTotal - porcentajeGanancia;
 
-        porcentajeReinversionBox.setText(Float.toString(porcentajeReinversion));
+        porcentajeReinversionBox.setText(Double.toString(porcentajeReinversion));
     }
 
     private void ajustarPorcentajeGanancia() {
 
         float porcentajeReinversion = Float.parseFloat(porcentajeReinversionBox.getText());
 
-        float porcentajeGanancia = porcentajeTotal - porcentajeReinversion;
+        double porcentajeGanancia = porcentajeTotal - porcentajeReinversion;
 
-        porcentajeGananciaBox.setText(Float.toString(porcentajeGanancia));
+        porcentajeGananciaBox.setText(Double.toString(porcentajeGanancia));
     }
 
     private float getPrecioCompra() {
@@ -805,7 +777,7 @@ public class EditarPanel extends javax.swing.JPanel {
         try {
             porcentaje = Float.parseFloat(porcentajeGananciaBox.getText());
         } catch (NumberFormatException Ex) {
-            porcentaje = 0;
+            System.out.println("Valor de porcentaje inválido");
         }
 
         return porcentaje;
@@ -862,6 +834,6 @@ public class EditarPanel extends javax.swing.JPanel {
         actualizarButton.setBackground(Colors.button);
 
         //Métodos
-        ivaButton.add(Images.getIvaEnable(), posi);
+       // ivaButton.add(Images.getIvaEnable(), posi);
     }
 }

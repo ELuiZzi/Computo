@@ -5,12 +5,12 @@ public class Producto {
     private int idProducto;
     private int cantidad;
 
-    private float precioCompra;
-    private float precioVenta;
-    private float porcentajeGanancia;
-    private float ganancia;
-    private float porcentajeReinversion;
-    private float reinversion;
+    private double precioCompra;
+    private double precioVenta;
+    private double porcentajeGanancia;
+    private double ganancia;
+    private double porcentajeReinversion;
+    private double reinversion;
 
     private String nombreProducto;
     private String marca;
@@ -38,13 +38,13 @@ public class Producto {
         this.setReinversion(0);
     }
 
-    public Float calcularGanacia(int cantidad) {
-        float ganaTotal = getGanancia() * cantidad;
+    public double calcularGanacia(int cantidad) {
+        double ganaTotal = getGanancia() * cantidad;
         return ganaTotal;
     }
 
-    public Float calcularReinversion(int cantidad) {
-        float reinTotal = getReinversion() * cantidad;
+    public double calcularReinversion(int cantidad) {
+        double reinTotal = getReinversion() * cantidad;
         return reinTotal;
     }
 
@@ -64,15 +64,15 @@ public class Producto {
         this.cantidad = cantidad;
     }
 
-    public float getPrecioCompra() {
+    public double getPrecioCompra() {
         return precioCompra;
     }
 
-    public void setPrecioCompra(float precioCompra) {
+    public void setPrecioCompra(double precioCompra) {
         this.precioCompra = precioCompra;
     }
 
-    public float getPrecioVenta() {
+    public double getPrecioVenta() {
         return precioVenta;
     }
 
@@ -80,7 +80,7 @@ public class Producto {
         this.precioVenta = precioVenta;
     }
 
-    public float getPorcentajeGanancia() {
+    public double getPorcentajeGanancia() {
         return porcentajeGanancia;
     }
 
@@ -88,15 +88,15 @@ public class Producto {
         this.porcentajeGanancia = porcentajeGanancia;
     }
 
-    public float getGanancia() {
+    public double getGanancia() {
         return ganancia;
     }
 
-    public void setGanancia(float ganancia) {
+    public void setGanancia(double ganancia) {
         this.ganancia = ganancia;
     }
 
-    public float getPorcentajeReinversion() {
+    public double getPorcentajeReinversion() {
         return porcentajeReinversion;
     }
 
@@ -104,11 +104,11 @@ public class Producto {
         this.porcentajeReinversion = porcentajeReinversion;
     }
 
-    public float getReinversion() {
+    public double getReinversion() {
         return reinversion;
     }
 
-    public void setReinversion(float reinversion) {
+    public void setReinversion(double reinversion) {
         this.reinversion = reinversion;
     }
 

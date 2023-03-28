@@ -1,28 +1,23 @@
 package com.lumtec.computo.Paneles;
 
 import com.lumtec.computo.Colors;
+import com.lumtec.computo.Go;
 import com.lumtec.computo.Home.Home;
-import com.lumtec.computo.IrA;
 import com.lumtec.computo.Imagenes.newProduct;
-import com.lumtec.computo.goTo;
-
 import javax.swing.JPanel;
 
 public class ComputoPanel extends javax.swing.JPanel {
 
-    
     private JPanel p;
     static JPanel mesa, background;
     Home home;
-    goTo go = new goTo();
-    static IrA a;
+
     newProduct b = new newProduct();
 
     public ComputoPanel(JPanel mesa, JPanel bc) {
         home = new Home("");
         ComputoPanel.mesa = mesa;
         ComputoPanel.background = bc;
-        a = new IrA(ComputoPanel.mesa, ComputoPanel.background);
         initComponents();
         initOwnComponents();
     }
@@ -215,7 +210,7 @@ public class ComputoPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void agregarButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_agregarButtonMouseClicked
-        a.agregarProducto();
+        Go.to(Home.agregarProdutcoPanel);
     }//GEN-LAST:event_agregarButtonMouseClicked
 
     private void agregarButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_agregarButtonMouseEntered
@@ -223,23 +218,23 @@ public class ComputoPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_agregarButtonMouseEntered
 
     private void inventarioButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_inventarioButtonMouseClicked
-        go.inventario();
+        Go.to(Home.inventarioPanel);
     }//GEN-LAST:event_inventarioButtonMouseClicked
 
     private void finanzasButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_finanzasButtonMouseClicked
-        a.finanzas();
+        Go.to(Home.finanzasPanel);
     }//GEN-LAST:event_finanzasButtonMouseClicked
 
     private void venderButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_venderButtonMouseClicked
-        a.vender();
+        Go.to(Home.venderProdutcoPanel);
     }//GEN-LAST:event_venderButtonMouseClicked
 
     private void faltantesButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_faltantesButtonMouseClicked
-        a.faltantes();
+        Go.to(Home.faltantesPanel);
     }//GEN-LAST:event_faltantesButtonMouseClicked
 
     private void editarButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editarButtonMouseClicked
-        a.editarProducto();
+        Go.to(Home.editarProdutcoPanel);
     }//GEN-LAST:event_editarButtonMouseClicked
 
     private void agregarButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_agregarButtonMouseExited
@@ -337,7 +332,6 @@ public class ComputoPanel extends javax.swing.JPanel {
     private void mousePressed(JPanel panel) {
         panel.setBackground(Colors.button);
     }
-
 
     private void initOwnComponents() {
         //Colorizacion

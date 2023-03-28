@@ -4,11 +4,11 @@ import com.lumtec.computo.Carrito;
 import com.lumtec.computo.Colors;
 import com.lumtec.computo.Imagenes.Images;
 import com.lumtec.computo.Inventario.*;
-import com.lumtec.computo.IrA;
 import com.lumtec.computo.Producto;
 import com.lumtec.computo.Vender.*;
-import com.lumtec.computo.goTo;
-import com.lumtec.computo.test;
+import com.lumtec.computo.Go;
+import ConexionBD.Conexion;
+import com.lumtec.computo.Home.Home;
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -24,8 +24,7 @@ public class VenderPanel extends javax.swing.JPanel {
     static int cantidad = 1;
     InventarioDAO inve = new InventarioDAOJDBC();
     DefaultTableCellRenderer alinear;
-    IrA a;
-    goTo go = new goTo();
+    Go go = new Go();
 
     DefaultTableModel modelo;
     VentaDAO ven;
@@ -95,16 +94,6 @@ public class VenderPanel extends javax.swing.JPanel {
         jPanel1.setBackground(new java.awt.Color(200, 200, 200));
         jPanel1.setMinimumSize(new java.awt.Dimension(860, 410));
         jPanel1.setPreferredSize(new java.awt.Dimension(860, 410));
-        jPanel1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jPanel1MouseClicked(evt);
-            }
-        });
-        jPanel1.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                jPanel1KeyPressed(evt);
-            }
-        });
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setFont(new java.awt.Font("Arial", 3, 12)); // NOI18N
@@ -227,7 +216,7 @@ public class VenderPanel extends javax.swing.JPanel {
         jPanel1.add(precioTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 295, 60, -1));
 
         añadirButton.setBackground(new java.awt.Color(245, 245, 243));
-        añadirButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        añadirButton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         añadirButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 añadirButtonMouseClicked(evt);
@@ -249,7 +238,7 @@ public class VenderPanel extends javax.swing.JPanel {
         jPanel1.add(añadirButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 270, 270, 30));
 
         venderButton.setBackground(new java.awt.Color(245, 245, 243));
-        venderButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        venderButton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         venderButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 venderButtonMouseClicked(evt);
@@ -287,7 +276,7 @@ public class VenderPanel extends javax.swing.JPanel {
         });
         jPanel1.add(cantidadBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(189, 60, 100, 25));
 
-        vaciButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        vaciButton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         vaciButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 vaciButtonMouseClicked(evt);
@@ -302,7 +291,7 @@ public class VenderPanel extends javax.swing.JPanel {
         vaciButton.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
         jPanel1.add(vaciButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 280, 50, 50));
 
-        inveButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        inveButton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         inveButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 inveButtonMouseClicked(evt);
@@ -376,13 +365,13 @@ public class VenderPanel extends javax.swing.JPanel {
         //Declarar todas las variables
         String[] variable = new String[4];
         int cantVend = Integer.parseInt(cantidadBox.getText());
-        float importe = prod.getPrecioVenta() * cantVend;
+        double importe = prod.getPrecioVenta() * cantVend;
 
         //Llenar la tabla con las variables
         variable[0] = Integer.toString(prod.getIdProducto());
         variable[1] = Integer.toString(cantVend);
         variable[2] = prod.getNombreProducto();
-        variable[3] = Float.toString(importe);
+        variable[3] = Double.toString(importe);
 
         //Se añade la información a una lista estática
         Carrito.carrito.add(variable);
@@ -428,7 +417,7 @@ public class VenderPanel extends javax.swing.JPanel {
 
             try {
                 //Se crea la conexión
-                con = test.getConnection();
+                con = Conexion.getConnection();
 
                 if (con.getAutoCommit()) {
                     con.setAutoCommit(false);
@@ -463,9 +452,7 @@ public class VenderPanel extends javax.swing.JPanel {
         }
         //Una vez vendidos los productos, se debe de eliminar el carritp
         Carrito.carrito.clear();
-//Regresar al Menú
-        a = new IrA();
-        a.computo();
+
     }//GEN-LAST:event_venderButtonMouseClicked
 
     private void venderButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_venderButtonMouseEntered
@@ -489,17 +476,6 @@ public class VenderPanel extends javax.swing.JPanel {
         }
 
     }//GEN-LAST:event_cantidadBoxKeyPressed
-
-    private void jPanel1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jPanel1KeyPressed
-        if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            a = new IrA();
-            a.computo();
-        }
-    }//GEN-LAST:event_jPanel1KeyPressed
-
-    private void jPanel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MouseClicked
-        jPanel1.requestFocus();
-    }//GEN-LAST:event_jPanel1MouseClicked
 
     private void cantidadBoxMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_cantidadBoxMouseWheelMoved
         if (evt.getWheelRotation() == 1 && cantidad > 1) {
@@ -528,7 +504,7 @@ public class VenderPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_vaciButtonMouseExited
 
     private void inveButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_inveButtonMouseClicked
-        go.inventario();
+        Go.to(Home.inventarioPanel);
     }//GEN-LAST:event_inveButtonMouseClicked
 
     private void inveButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_inveButtonMouseEntered
@@ -583,7 +559,7 @@ public class VenderPanel extends javax.swing.JPanel {
 
         producto_box.setText(prod.getNombreProducto());
         modeloBox.setText(prod.getModelo());
-        precioBox.setText("$ " + Float.toString(prod.getPrecioVenta()));
+        precioBox.setText("$ " + Double.toString(prod.getPrecioVenta()));
     }
 
     private void totalActual() {

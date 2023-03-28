@@ -4,14 +4,12 @@ import com.lumtec.computo.Colors;
 import com.lumtec.computo.Faltante;
 import com.lumtec.computo.Faltantes.*;
 import com.lumtec.computo.Imagenes.Images;
-import com.lumtec.computo.IrA;
 import java.awt.event.KeyEvent;
 import org.netbeans.lib.awtextra.AbsoluteConstraints;
 
 public class NuevoFaltantePanel extends javax.swing.JPanel {
 
     FaltantesDAO faltDAO = new FaltantesDAOJDBC();
-    IrA a;
     Faltante falt = new Faltante();
     ;
     AbsoluteConstraints posi = new AbsoluteConstraints(0, 0);
@@ -59,16 +57,6 @@ public class NuevoFaltantePanel extends javax.swing.JPanel {
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         Panel1.setPreferredSize(new java.awt.Dimension(860, 410));
-        Panel1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                Panel1MouseClicked(evt);
-            }
-        });
-        Panel1.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                Panel1KeyPressed(evt);
-            }
-        });
         Panel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setFont(new java.awt.Font("Arial", 3, 12)); // NOI18N
@@ -309,17 +297,6 @@ public class NuevoFaltantePanel extends javax.swing.JPanel {
             busquedaBox.setForeground(Colors.textBlocked);
         }
     }//GEN-LAST:event_busquedaBoxFocusLost
-
-    private void Panel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Panel1MouseClicked
-        Panel1.requestFocus();
-    }//GEN-LAST:event_Panel1MouseClicked
-
-    private void Panel1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_Panel1KeyPressed
-        if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            a = new IrA();
-            a.faltantes();
-        }
-    }//GEN-LAST:event_Panel1KeyPressed
 
     private void marcaBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_marcaBoxActionPerformed
         // TODO add your handling code here:

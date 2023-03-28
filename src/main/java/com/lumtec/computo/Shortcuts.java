@@ -5,7 +5,6 @@ import javax.swing.table.DefaultTableModel;
 
 public class Shortcuts {
 
-    IrA a;
 
     public void editProd(JTable table) {
 
@@ -13,8 +12,6 @@ public class Shortcuts {
 
         int id = Integer.parseInt((String) model.getValueAt(table.getSelectedRow(), 0));
 
-        a = new IrA();
-        a.editarProductoSelec(id);
     }
 
     public void sell(JTable table) {
@@ -22,8 +19,7 @@ public class Shortcuts {
 
         int id = Integer.parseInt((String) model.getValueAt(table.getSelectedRow(), 0));
 
-        a = new IrA();
-        a.venderProductoSelec(id);
+     
     }
 
 }

@@ -44,7 +44,7 @@ public class Search {
         String[] fila;
 
         for (int i = 0; i < model.getRowCount(); i++) {
-            fila = new String[6];
+            fila = new String[5];
             for (int l = 0; l < fila.length; l++) {
                 fila[l] = (String) model.getValueAt(i, l);
             }

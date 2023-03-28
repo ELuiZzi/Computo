@@ -1,4 +1,4 @@
-package com.lumtec.computo;
+package ConexionBD;
 
 import java.sql.*;
 
@@ -6,14 +6,26 @@ import java.sql.*;
  *
  * @author billi
  */
-public class test {
+public class Conexion {
 
-    private static final String url = "jdbc:mysql://127.0.0.1:3306/computo?useSSL=false&useTimezone=true&serverTimezone=UTC&allowPublicKeyRetrieval=true";
+    private static String direccionIP = "localhost";
+    private static String puerto = "3306";
+    private static String nombreBD = "computo";
+
+    private static final String url = "jdbc:mysql://" + direccionIP + ":" + puerto + "/" + nombreBD + "?useSSL=false&useTimezone=true&serverTimezone=UTC&allowPublicKeyRetrieval=true";
     private static final String user = "root";
     private static final String pass = "admin";
 
-    public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(url, user, pass);
+    public static Connection getConnection() {
+        Connection con = null;
+
+        try {
+            con = DriverManager.getConnection(url, user, pass);
+        } catch (SQLException ex) {
+            System.out.println("Error: Conexión con la Base de Datos");
+        }
+        return con;
+
     }
 
     public static void close(PreparedStatement pps) {

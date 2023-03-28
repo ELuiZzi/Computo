@@ -3,7 +3,7 @@ package com.lumtec.computo.Inventario;
 import com.lumtec.computo.Faltantes.FaltantesDAO;
 import com.lumtec.computo.Faltantes.FaltantesDAOJDBC;
 import com.lumtec.computo.Producto;
-import com.lumtec.computo.test;
+import ConexionBD.Conexion;
 import java.sql.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -33,8 +33,8 @@ public class InventarioDAOJDBC implements InventarioDAO {
         PreparedStatement pps = null;
 
         try {
-            con = this.conexionTransaccional != null ? this.conexionTransaccional : test.getConnection();
-            pps = con.prepareStatement("INSERT INTO inventario (nombre_producto,marca,cantidad,color,modelo,descripcion,provedor,precio_compra, precio_venta, ganancia, reinversion, porcentajeGanancia, porcentajeReinversion, garantia) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
+            con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
+            pps = con.prepareStatement("INSERT INTO inventario (NOMBRE,MARCA,CANTIDAD,COLOR,MODELO,DESCRIPCION,PROVEDOR,PRECIO_COMPRA, PRECIO_VENTA, GANANCIA, REINVERSION, PORCENAJE_GANANCIA, PORCENTAJE_REINVERSION, GARANTIA) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
 
             pps.setString(1, prod.getNombreProducto());
             pps.setString(2, prod.getMarca());
@@ -43,23 +43,26 @@ public class InventarioDAOJDBC implements InventarioDAO {
             pps.setString(5, prod.getModelo());
             pps.setString(6, prod.getDescripcion());
             pps.setString(7, prod.getProvedor());
-            pps.setFloat(8, prod.getPrecioCompra());
-            pps.setFloat(9, prod.getPrecioVenta());
-            pps.setFloat(10, prod.getGanancia());
-            pps.setFloat(11, prod.getReinversion());
-            pps.setFloat(12, prod.getPorcentajeGanancia());
-            pps.setFloat(13, prod.getPorcentajeReinversion());
+            pps.setDouble(8, prod.getPrecioCompra());
+            pps.setDouble(9, prod.getPrecioVenta());
+            pps.setDouble(10, prod.getGanancia());
+            pps.setDouble(11, prod.getReinversion());
+            pps.setDouble(12, prod.getPorcentajeGanancia());
+            pps.setDouble(13, prod.getPorcentajeReinversion());
             pps.setString(14, prod.getGarantia());
 
             pps.execute();
 
             JOptionPane.showMessageDialog(null, "Producto Agregado Exitosamente");
         } catch (SQLException ex) {
-            ex.getMessage();
+            if(ex.getMessage().equals("Duplicate entry 'BD' for key 'inventario.NOMBRE_UNIQUE'")){
+                JOptionPane.showMessageDialog(null, "El nombre ya existe en la BD");
+            }
+            
         } finally {
             //Cerrar Conexiones
-            test.close(con);
-            test.close(pps);
+            Conexion.close(con);
+            Conexion.close(pps);
 
             //Resetear Producto
             prod.reset();
@@ -71,7 +74,7 @@ public class InventarioDAOJDBC implements InventarioDAO {
     public void eliminarProducto(int id) {
         Connection con;
         try {
-            con = this.conexionTransaccional != null ? this.conexionTransaccional : test.getConnection();
+            con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
 
             PreparedStatement pps = con.prepareStatement("DELETE from inventario WHERE id_producto=" + id + "");
             pps.executeUpdate();
@@ -89,7 +92,7 @@ public class InventarioDAOJDBC implements InventarioDAO {
         PreparedStatement pps;
         ResultSet rs;
         try {
-            con = this.conexionTransaccional != null ? this.conexionTransaccional : test.getConnection();
+            con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
             pps = con.prepareStatement("SELECT * FROM inventario WHERE id_producto= " + produ.getIdProducto() + "");
             rs = pps.executeQuery();
             if (rs.next()) {
@@ -136,7 +139,7 @@ public class InventarioDAOJDBC implements InventarioDAO {
         Connection con;
         PreparedStatement pps;
         try {
-            con = this.conexionTransaccional != null ? this.conexionTransaccional : test.getConnection();
+            con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
             pps = con.prepareStatement("UPDATE inventario SET nombre_producto=?, marca=?, modelo=?, color=?, descripcion=?, cantidad=?, precio_compra=?, precio_venta=?, ganancia=?, reinversion=?, porcentajeGanancia = ?, porcentajeReinversion = ?, provedor = ?, garantia= ? WHERE id_producto = " + prod.getIdProducto() + "");
             pps.setString(1, prod.getNombreProducto());
             pps.setString(2, prod.getMarca());
@@ -144,12 +147,13 @@ public class InventarioDAOJDBC implements InventarioDAO {
             pps.setString(4, prod.getColor());
             pps.setString(5, prod.getDescripcion());
             pps.setInt(6, prod.getCantidad());
-            pps.setFloat(7, prod.getPrecioCompra());
-            pps.setFloat(8, prod.getPrecioVenta());
-            pps.setFloat(9, prod.getGanancia());
-            pps.setFloat(10, prod.getReinversion());
-            pps.setFloat(11, prod.getPorcentajeGanancia());
-            pps.setFloat(12, prod.getPorcentajeReinversion());
+       
+            pps.setDouble(7, prod.getPrecioCompra());
+            pps.setDouble(8, prod.getPrecioVenta());
+            pps.setDouble(9, prod.getGanancia());
+            pps.setDouble(10, prod.getReinversion());
+            pps.setDouble(11, prod.getPorcentajeGanancia());
+            pps.setDouble(12, prod.getPorcentajeReinversion());
             pps.setString(13, prod.getProvedor());
             pps.setString(14, prod.getGarantia());
             pps.executeUpdate();
@@ -166,7 +170,7 @@ public class InventarioDAOJDBC implements InventarioDAO {
         int cantidad_actual = prod.getCantidad() - cantidad;
         int idProducto = prod.getIdProducto();
         try {
-            con = this.conexionTransaccional != null ? this.conexionTransaccional : test.getConnection();
+            con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
             //Restar de inventario
             pps = con.prepareStatement("UPDATE inventario SET cantidad= ? WHERE id_producto = ?");
             pps.setInt(1, cantidad_actual);
@@ -180,16 +184,16 @@ public class InventarioDAOJDBC implements InventarioDAO {
             pps.setString(4, prod.getModelo());
             pps.setInt(5, cantidad);
             pps.setString(6, prod.getDescripcion());
-            pps.setFloat(7, prod.getPrecioCompra());
+            pps.setDouble(7, prod.getPrecioCompra());
             pps.setString(8, prod.getProvedor());
             pps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
         } finally {
             if (this.conexionTransaccional == null) {
-                test.close(con);
+                Conexion.close(con);
             }
-            test.close(pps);
+            Conexion.close(pps);
         }
 
     }
@@ -215,7 +219,7 @@ public class InventarioDAOJDBC implements InventarioDAO {
             ex.printStackTrace(System.out);
         } finally {
             if (this.conexionTransaccional == null) {
-                test.close(con);
+                Conexion.close(con);
             }
         }
     }
@@ -230,13 +234,13 @@ public class InventarioDAOJDBC implements InventarioDAO {
         PreparedStatement pps = null;
         int cantidad_actual = prod.getCantidad() - cantidad;
 
-        float totalVenta = cantidad * prod.getPrecioCompra();
+        double totalVenta = cantidad * prod.getPrecioCompra();
 
         ResultSet rs;
 
         try {
             //Comprobar si en el registro de Faltantes ya está el producto
-            con = conexionTransaccional != null ? this.conexionTransaccional : test.getConnection();
+            con = conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
             pps = con.prepareStatement("SELECT * FROM faltantes WHERE id_producto = '" + id + "'");
             rs = pps.executeQuery();
             if (rs.next()) {
@@ -258,7 +262,7 @@ public class InventarioDAOJDBC implements InventarioDAO {
                     pps.setString(4, prod.getModelo());
                     pps.setInt(5, cantidad);
                     pps.setString(6, prod.getDescripcion());
-                    pps.setFloat(7, totalVenta);
+                    pps.setDouble(7, totalVenta);
                     pps.setInt(8, prod.getIdProducto());
                     pps.setString(9, prod.getProvedor());
                     pps.executeUpdate();
@@ -282,7 +286,7 @@ public class InventarioDAOJDBC implements InventarioDAO {
         PreparedStatement pps;
         ResultSet rs;
         try {
-            con = this.conexionTransaccional != null ? this.conexionTransaccional : test.getConnection();
+            con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
             pps = con.prepareStatement("SELECT * FROM inventario WHERE modelo = '" + prod.getModelo() + "' AND nombre_producto = '" + prod.getNombreProducto() + "' AND descripcion = '" + prod.getDescripcion() + "'");
             rs = pps.executeQuery();
 
@@ -300,14 +304,14 @@ public class InventarioDAOJDBC implements InventarioDAO {
     public void insertarPrecio(Producto prod) {
         Connection conn;
         try {
-            conn = this.conexionTransaccional != null ? this.conexionTransaccional : test.getConnection();
+            conn = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
             PreparedStatement pps = conn.prepareStatement("UPDATE inventario SET precio_compra = ?, precio_venta = ?, ganancia = ?, reinversion = ?, porcentajeGanancia = ?, porcentajeReinversion = ?  WHERE id_producto = " + prod.getIdProducto() + ";");
-            pps.setFloat(1, prod.getPrecioCompra());
-            pps.setFloat(2, prod.getPrecioVenta());
-            pps.setFloat(3, prod.getGanancia());
-            pps.setFloat(4, prod.getReinversion());
-            pps.setFloat(5, prod.getPorcentajeGanancia());
-            pps.setFloat(6, prod.getPorcentajeReinversion());
+            pps.setDouble(1, prod.getPrecioCompra());
+            pps.setDouble(2, prod.getPrecioVenta());
+            pps.setDouble(3, prod.getGanancia());
+            pps.setDouble(4, prod.getReinversion());
+            pps.setDouble(5, prod.getPorcentajeGanancia());
+            pps.setDouble(6, prod.getPorcentajeReinversion());
             pps.executeUpdate();
             JOptionPane.showMessageDialog(null, "Precio Agregado");
 
@@ -321,7 +325,7 @@ public class InventarioDAOJDBC implements InventarioDAO {
         Connection con;
         PreparedStatement pps;
         try {
-            con = this.conexionTransaccional != null ? this.conexionTransaccional : test.getConnection();
+            con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
             pps = con.prepareStatement("UPDATE inventario SET cantidad = ? WHERE id_producto = '" + id + "'");
             pps.setInt(1, cantidad);
             pps.executeUpdate();
@@ -337,7 +341,7 @@ public class InventarioDAOJDBC implements InventarioDAO {
         ResultSet rs;
         int cantidadActual = 0;
         try {
-            con = this.conexionTransaccional != null ? this.conexionTransaccional : test.getConnection();
+            con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
             pps = con.prepareStatement("SELECT cantidad FROM inventario WHERE id_producto = " + id + "");
             rs = pps.executeQuery();
             if (rs.next()) {
@@ -358,7 +362,7 @@ public class InventarioDAOJDBC implements InventarioDAO {
         PreparedStatement pps;
         ResultSet rs;
         try {
-            con = this.conexionTransaccional != null ? this.conexionTransaccional : test.getConnection();
+            con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
             pps = con.prepareStatement("SELECT precio_compra, cantidad FROM inventario");
             rs = pps.executeQuery();
             while (rs.next()) {
@@ -386,7 +390,7 @@ public class InventarioDAOJDBC implements InventarioDAO {
         PreparedStatement pps;
         ResultSet rs;
         try {
-            con = this.conexionTransaccional != null ? this.conexionTransaccional : test.getConnection();
+            con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
             pps = con.prepareStatement("SELECT precio_venta, cantidad FROM inventario");
             rs = pps.executeQuery();
             while (rs.next()) {

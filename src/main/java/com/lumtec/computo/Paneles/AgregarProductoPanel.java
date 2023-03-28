@@ -1,23 +1,21 @@
 package com.lumtec.computo.Paneles;
 
 import com.lumtec.computo.Colors;
+import com.lumtec.computo.FuncionesMatematicas;
 import com.lumtec.computo.Ganancias;
 import com.lumtec.computo.Inventario.*;
-import com.lumtec.computo.IrA;
 import com.lumtec.computo.Producto;
-
 import java.awt.Cursor;
 import java.awt.event.KeyEvent;
 
 public class AgregarProductoPanel extends javax.swing.JPanel {
-
-    float IVA = .16f;
+    
     InventarioDAO inv;
-    static IrA a;
+    
     Producto prod;
 //Objeto Ganancias, para calcular el porcentaje de ganacia 
     Ganancias gains = new Ganancias();
-
+    
     public AgregarProductoPanel() {
         prod = new Producto();
         initComponents();
@@ -73,16 +71,6 @@ public class AgregarProductoPanel extends javax.swing.JPanel {
 
         jPanel1.setMinimumSize(new java.awt.Dimension(860, 410));
         jPanel1.setPreferredSize(new java.awt.Dimension(860, 410));
-        jPanel1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jPanel1MouseClicked(evt);
-            }
-        });
-        jPanel1.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                jPanel1KeyPressed(evt);
-            }
-        });
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setFont(new java.awt.Font("Arial", 3, 12)); // NOI18N
@@ -210,6 +198,11 @@ public class AgregarProductoPanel extends javax.swing.JPanel {
         jToggleButton1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         jToggleButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jToggleButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jToggleButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jToggleButton1MouseClicked(evt);
+            }
+        });
         jToggleButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jToggleButton1ActionPerformed(evt);
@@ -402,7 +395,7 @@ public class AgregarProductoPanel extends javax.swing.JPanel {
     private void precioBoxKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_precioBoxKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             precioIVABox.setText(null);
-            setPorcetages();
+            setPorcentage();
             crearPrecios();
         }
     }//GEN-LAST:event_precioBoxKeyPressed
@@ -412,9 +405,9 @@ public class AgregarProductoPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_precioBoxKeyTyped
 
     private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
-        float precioIva = getPrecioCompra() + (getPrecioCompra() * IVA);
-        precioIVABox.setText(Float.toString(precioIva));
-        setPorcetages();
+        double precioIva = getPrecioCompra() + FuncionesMatematicas.returnIva(getPrecioCompra());
+        precioIVABox.setText(Double.toString(precioIva));
+        setPorcentage();
         crearPrecios();
     }//GEN-LAST:event_jToggleButton1ActionPerformed
 
@@ -448,11 +441,11 @@ public class AgregarProductoPanel extends javax.swing.JPanel {
     private void agregarButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_agregarButtonMouseExited
         agregarButton.setBackground(Colors.button);
     }//GEN-LAST:event_agregarButtonMouseExited
-
+    
     private static int cantidad = 1;
 
     private void cantidadBoxKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_cantidadBoxKeyPressed
-
+        
         if (evt.getKeyCode() == KeyEvent.VK_UP) {
             cantidad++;
             cantidadBox.setText(Integer.toString(cantidad));
@@ -460,7 +453,7 @@ public class AgregarProductoPanel extends javax.swing.JPanel {
             cantidad--;
             cantidadBox.setText(Integer.toString(cantidad));
         }
-
+        
 
     }//GEN-LAST:event_cantidadBoxKeyPressed
 
@@ -475,11 +468,10 @@ public class AgregarProductoPanel extends javax.swing.JPanel {
          * Agregar un Producto a la base de datos
          */
         inv = new InventarioDAOJDBC();
-
+        
         crearProducto();
         inv.insertar(prod);
-        a = new IrA();
-        a.computo();
+      
 
     }//GEN-LAST:event_agregarButtonMouseClicked
 
@@ -488,7 +480,7 @@ public class AgregarProductoPanel extends javax.swing.JPanel {
             float aumento = Float.parseFloat(porcentajeBox.getText());
             float rein = aumento * .6f;
             float gana = aumento * .4f;
-
+            
             gananciaBox.setText(Float.toString(gana));
             reinversionBox.setText(Float.toString(rein));
             
@@ -498,16 +490,10 @@ public class AgregarProductoPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_porcentajeBoxKeyPressed
 
-    private void jPanel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MouseClicked
-        jPanel1.requestFocus();
-    }//GEN-LAST:event_jPanel1MouseClicked
+    private void jToggleButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jToggleButton1MouseClicked
+        
 
-    private void jPanel1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jPanel1KeyPressed
-        if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            a = new IrA();
-            a.computo();
-        }
-    }//GEN-LAST:event_jPanel1KeyPressed
+    }//GEN-LAST:event_jToggleButton1MouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -552,26 +538,32 @@ public class AgregarProductoPanel extends javax.swing.JPanel {
     private javax.swing.JCheckBox transporteCheck;
     // End of variables declaration//GEN-END:variables
 
-    private float getPrecioCompra() {
-        return Float.parseFloat(precioBox.getText());
+    private double getPrecioCompra() {
+        float precioCompra = 0;
+        try {
+            precioCompra = Float.parseFloat(precioBox.getText());
+        } catch (NumberFormatException ex) {
+            System.out.println("Precio de Compra Inválido");
+        }
+        return precioCompra;
     }
-
+    
     private float getPGanancia() {
         return (Float.parseFloat(gananciaBox.getText()) / 100);
     }
-
+    
     private float getPReinversion() {
         return (Float.parseFloat(reinversionBox.getText()) / 100);
     }
-
+    
     private float getPTotal() {
         return (Float.parseFloat(porcentajeBox.getText()) / 100);
     }
-
+    
     private float getPrecioVenta() {
         return Float.parseFloat(precioVentaBox.getText());
     }
-
+    
     private float getPrecioIVA() {
         float pIVA;
         try {
@@ -579,47 +571,49 @@ public class AgregarProductoPanel extends javax.swing.JPanel {
         } catch (NumberFormatException ex) {
             pIVA = 0;
         }
-
+        
         return pIVA;
     }
-
-    private float precioCompra() {
+    
+    private double precioCompra() {
         return getPrecioIVA() != 0 ? getPrecioIVA() : getPrecioCompra();
     }
-    float pTotal;
-    float ganancia;
-    float reinversion;
-    float precioVenta;
+    double pTotal;
+    double ganancia;
+    double reinversion;
+    double precioVenta;
 
     //Este método agrega los porcentajes a las cajas de texto
-    private void setPorcetages() {
+    private void setPorcentage() {
         //La caja de texto convierte un Float a Strign, el cual es el porcentaje de aumento
-        float aumento = gains.setGanancia(precioCompra());
-        porcentajeBox.setText(Float.toString(aumento));
+        double aumento = gains.getGanancia(precioCompra());
+        
+        porcentajeBox.setText(Double.toString(aumento));
 
-        //Multiplicamos la aumento por .4 y por .6, el valor más grande es para reinversión y el menor para aumento
-        float rein = aumento * .6f;
-        float gana = aumento * .4f;
-
-        gananciaBox.setText(Float.toString(gana));
-        reinversionBox.setText(Float.toString(rein));
-
+        //Multiplicamos el aumento por .4 y por .6, el valor más grande es para reinversión y el menor para aumento
+        double rein = (10 / precioCompra()) * 100;
+        double gana = aumento - rein;
+        
+        
+        //
+        reinversionBox.setText(Double.toString(Math.round(rein)));
+        gananciaBox.setText(Double.toString(Math.round(gana)));
     }
-
+    
     private void crearPrecios() {
-
+        
         pTotal = (precioCompra() * getPTotal());
         ganancia = (precioCompra() * getPGanancia());
         reinversion = (precioCompra() * getPReinversion());
         precioVenta = precioCompra() + (precioCompra() * getPTotal());
-
-        porcentaje_label.setText("$ " + Float.toString(pTotal));
-        ganancia_label.setText("$ " + Float.toString(ganancia));
-        reinversion_label.setText("$ " + Float.toString(reinversion));
-        precioVentaBox.setText(Integer.toString(Math.round(precioVenta)));
-
+        
+        porcentaje_label.setText("$ " + Double.toString(Math.round(pTotal)));
+        ganancia_label.setText("$ " + Double.toString(Math.round(ganancia)));
+        reinversion_label.setText("$ " + Double.toString(Math.round(reinversion)));
+        precioVentaBox.setText(Integer.toString((int) Math.round(precioVenta)));
+        
     }
-
+    
     private void crearProducto() {
 
         //Campos String
@@ -640,18 +634,18 @@ public class AgregarProductoPanel extends javax.swing.JPanel {
             prod.setReinversion(reinversion);
             prod.setPorcentajeGanancia(Float.parseFloat(gananciaBox.getText()));
             prod.setPorcentajeReinversion(Float.parseFloat(reinversionBox.getText()));
-
+            
         } catch (NumberFormatException Ex) {
         }
-
+        
     }
-
+    
     private void initOwnComponents() {
         //Colorizacion
         jPanel1.setBackground(Colors.panel);
-
+        
         agregarButton.setBackground(Colors.button);
-
+        
         nombreBox.setBackground(Colors.textBox);
         marcaBox.setBackground(Colors.textBox);
         modeloBox.setBackground(Colors.textBox);

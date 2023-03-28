@@ -1,7 +1,7 @@
 package com.lumtec.computo.Faltantes;
 
 import com.lumtec.computo.Faltante;
-import com.lumtec.computo.test;
+import ConexionBD.Conexion;
 import java.sql.*;
 import javax.swing.JOptionPane;
 
@@ -24,7 +24,7 @@ public class FaltantesDAOJDBC implements FaltantesDAO {
         ResultSet rs;
 
         try {
-            con = conexionTransaccional != null ? this.conexionTransaccional : test.getConnection();
+            con = conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
             pps = con.prepareStatement("SELECT * FROM faltantes WHERE id_producto = ?");
             pps.setInt(1, id);
             rs = pps.executeQuery();
@@ -43,7 +43,7 @@ public class FaltantesDAOJDBC implements FaltantesDAO {
             ex.printStackTrace(System.out);
         } finally {
             if (this.conexionTransaccional == null) {
-                test.close(con);
+                Conexion.close(con);
             }
         }
         return falt;
@@ -57,7 +57,7 @@ public class FaltantesDAOJDBC implements FaltantesDAO {
         ResultSet rs;
         int cantidad = 0;
         try {
-            con = test.getConnection();
+            con = Conexion.getConnection();
             pps = con.prepareStatement("SELECT cantidad FROM faltantes WHERE id_producto = " + id + "");
             rs = pps.executeQuery();
             if (rs.next()) {
@@ -67,7 +67,7 @@ public class FaltantesDAOJDBC implements FaltantesDAO {
             System.out.println("Error en el método getCantidad(), obteniendo de 'faltantes' la cantidad");
         } finally {
 
-            test.close(con);
+            Conexion.close(con);
 
         }
         return cantidad;
@@ -79,7 +79,7 @@ public class FaltantesDAOJDBC implements FaltantesDAO {
         PreparedStatement pps;
 
         try {
-            con = this.conexionTransaccional != null ? this.conexionTransaccional : test.getConnection();
+            con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
             pps = con.prepareStatement("INSERT INTO faltantes (nombre_producto, marca, color, modelo, cantidad, descripcion, precio_compra, provedor) VALUES(?,?,?,?,?,?,?,?)");
 
             pps.setString(1, falt.getNombre_producto());
@@ -105,7 +105,7 @@ public class FaltantesDAOJDBC implements FaltantesDAO {
         PreparedStatement pps;
 
         try {
-            con = this.conexionTransaccional != null ? this.conexionTransaccional : test.getConnection();
+            con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
             pps = con.prepareStatement("UPDATE faltantes SET nombre_producto = ?, marca = ? , color = ?, modelo = ?, cantidad = ?, descripcion = ?, precio_compra = ?, provedor = ?  WHERE id_producto = '" + id + "'");
             pps.setString(1, falt.getNombre_producto());
             pps.setString(2, falt.getMarca());
@@ -132,14 +132,14 @@ public class FaltantesDAOJDBC implements FaltantesDAO {
 
         float totalCompra = falt.getCantidad() * falt.getPrecio_compra();
         try {
-            con = this.conexionTransaccional != null ? this.conexionTransaccional : test.getConnection();
+            con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
             pps = con.prepareStatement("UPDATE faltantes SET precio_total = ? WHERE id_producto = '" + id + "'");
             pps.setFloat(1, totalCompra);
             pps.executeUpdate();
         } catch (SQLException ex) {
 
         } finally {
-            test.close(con);
+            Conexion.close(con);
         }
     }
 
@@ -149,7 +149,7 @@ public class FaltantesDAOJDBC implements FaltantesDAO {
         PreparedStatement pps;
 
         try {
-            con = this.conexionTransaccional != null ? this.conexionTransaccional : test.getConnection();
+            con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
             pps = con.prepareStatement("DELETE FROM faltantes WHERE id_producto = '" + id + "'");
             pps.executeUpdate();
             JOptionPane.showMessageDialog(null, "Faltante Eliminado");
@@ -165,7 +165,7 @@ public class FaltantesDAOJDBC implements FaltantesDAO {
         ResultSet rs;
 
         try {
-            con = this.conexionTransaccional != null ? this.conexionTransaccional : test.getConnection();
+            con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
             pps = con.prepareStatement("SELECT * FROM faltantes");
             rs = pps.executeQuery();
             while (rs.next()) {
@@ -194,7 +194,7 @@ public class FaltantesDAOJDBC implements FaltantesDAO {
         PreparedStatement pps;
 
         try {
-            con = this.conexionTransaccional != null ? this.conexionTransaccional : test.getConnection();
+            con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
             pps = con.prepareStatement("UPDATE faltantes SET cantidad = ?  WHERE id_Producto = " + id + "");
             pps.setInt(1, cantidad);
             pps.executeUpdate();

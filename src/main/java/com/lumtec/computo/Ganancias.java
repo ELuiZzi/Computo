@@ -3,7 +3,7 @@ package com.lumtec.computo;
 public class Ganancias {
 
     //Este método recibe el precio de compra de un producto y te devuelve el porcentaje que se le debe de aumentar
-    public float setGanancia(float price) {
+    public float getGanancia(double price) {
         //El valor default de ganancia es de 100, lo que quiere decir que en caso de algún error, devolverá el 100% de ganancia
         float ganancia = 100;
 

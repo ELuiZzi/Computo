@@ -4,9 +4,8 @@ import com.lumtec.computo.ClipBoar;
 import com.lumtec.computo.Colors;
 import com.lumtec.computo.Inventario.InventarioDAO;
 import com.lumtec.computo.Inventario.InventarioDAOJDBC;
-import com.lumtec.computo.IrA;
 import com.lumtec.computo.Tiempo;
-import com.lumtec.computo.test;
+import ConexionBD.Conexion;
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,7 +19,6 @@ public class FinanzasPanel extends javax.swing.JPanel {
     InventarioDAO inv = new InventarioDAOJDBC(); //Esta variable carga el metodo de inversión
     DefaultTableModel modelVent, modelVentMens, model2;
     DefaultComboBoxModel modelBox;
-    IrA a;
     String añoActual = Tiempo.getAño();
     String mesActual = Tiempo.getMes();
 
@@ -75,16 +73,6 @@ public class FinanzasPanel extends javax.swing.JPanel {
         jTabbedPane1.setMinimumSize(new java.awt.Dimension(860, 410));
         jTabbedPane1.setPreferredSize(new java.awt.Dimension(860, 410));
 
-        Panel2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                Panel2MouseClicked(evt);
-            }
-        });
-        Panel2.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                Panel2KeyPressed(evt);
-            }
-        });
         Panel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jScrollPane2.setBackground(new java.awt.Color(0, 0, 0));
@@ -180,7 +168,7 @@ public class FinanzasPanel extends javax.swing.JPanel {
         Banner.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 7, 10, 30));
 
         seleccionarBoton.setBackground(new java.awt.Color(215, 215, 215));
-        seleccionarBoton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        seleccionarBoton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         seleccionarBoton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 seleccionarBotonMouseClicked(evt);
@@ -263,7 +251,7 @@ public class FinanzasPanel extends javax.swing.JPanel {
         FinanzasPanel.add(gananLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 90, 90, -1));
 
         copyButton.setBackground(new java.awt.Color(70, 73, 75));
-        copyButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        copyButton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         copyButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 copyButtonMouseClicked(evt);
@@ -316,17 +304,6 @@ public class FinanzasPanel extends javax.swing.JPanel {
 
         add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 860, 410));
     }// </editor-fold>//GEN-END:initComponents
-
-    private void Panel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Panel2MouseClicked
-        Panel2.requestFocus();
-    }//GEN-LAST:event_Panel2MouseClicked
-
-    private void Panel2KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_Panel2KeyPressed
-        if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            a = new IrA();
-            a.computo();
-        }
-    }//GEN-LAST:event_Panel2KeyPressed
 
     private void seleccionarBotonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_seleccionarBotonMouseClicked
         if (seleccionarBoton.isEnabled()) {
@@ -430,7 +407,7 @@ public class FinanzasPanel extends javax.swing.JPanel {
         float ganancia = 0;
         float reinversion = 0;
         try {
-            con = test.getConnection();
+            con = Conexion.getConnection();
             pps = con.prepareStatement("SELECT * FROM ventas WHERE mesVenta = '" + mes + "' AND añoVenta='" + año + "'");
             rs = pps.executeQuery();
             while (rs.next()) {
@@ -444,9 +421,9 @@ public class FinanzasPanel extends javax.swing.JPanel {
         } catch (SQLException ex) {
             ex.printStackTrace(System.out);
         } finally {
-            test.close(con);
-            test.close(pps);
-            test.close(rs);
+            Conexion.close(con);
+            Conexion.close(pps);
+            Conexion.close(rs);
         }
     }
 
@@ -479,7 +456,7 @@ public class FinanzasPanel extends javax.swing.JPanel {
         Connection con;
         PreparedStatement pps;
         try {
-            con = test.getConnection();
+            con = Conexion.getConnection();
             pps = con.prepareStatement("SELECT * FROM ventas");
             ResultSet rs = pps.executeQuery();
             while (rs.next()) {
@@ -505,7 +482,7 @@ public class FinanzasPanel extends javax.swing.JPanel {
         PreparedStatement pps;
         ResultSet rs;
         try {
-            con = test.getConnection();
+            con = Conexion.getConnection();
             pps = con.prepareStatement("SELECT * FROM ventas WHERE mesVenta = '" + mes + "' AND añoVenta ='" + año + "'");
             rs = pps.executeQuery();
             while (rs.next()) {

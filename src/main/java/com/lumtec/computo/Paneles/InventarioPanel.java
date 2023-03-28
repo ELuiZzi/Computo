@@ -2,11 +2,9 @@ package com.lumtec.computo.Paneles;
 
 import com.lumtec.computo.Colors;
 import com.lumtec.computo.HerramientasTabla;
-import com.lumtec.computo.IrA;
 import com.lumtec.computo.Search;
 import com.lumtec.computo.Shortcuts;
-import com.lumtec.computo.test;
-
+import ConexionBD.Conexion;
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -25,7 +23,6 @@ public class InventarioPanel extends javax.swing.JPanel {
     PreparedStatement pps;
     ResultSet rs;
     String[] datos;
-    IrA a;
     Search sear;
 
     Shortcuts sc = new Shortcuts();
@@ -49,16 +46,6 @@ public class InventarioPanel extends javax.swing.JPanel {
 
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jPanel1MouseClicked(evt);
-            }
-        });
-        jPanel1.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                jPanel1KeyPressed(evt);
-            }
-        });
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jScrollPane1.setBackground(new java.awt.Color(70, 70, 70));
@@ -125,17 +112,6 @@ public class InventarioPanel extends javax.swing.JPanel {
         add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 860, 410));
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jPanel1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jPanel1KeyPressed
-        if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            a = new IrA();
-            a.computo();
-        }
-    }//GEN-LAST:event_jPanel1KeyPressed
-
-    private void jPanel1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel1MouseClicked
-        jPanel1.requestFocus();
-    }//GEN-LAST:event_jPanel1MouseClicked
-
     private void tablaInventarioKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tablaInventarioKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_DELETE) {
             conf.eliminarId("inventario", tablaInventario, con, pps);
@@ -200,22 +176,20 @@ public class InventarioPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_barraBusquedaKeyPressed
 
     private void alinearColumnas() {
-        tablaInventario.getColumnModel().getColumn(0).setMinWidth(25);
-        tablaInventario.getColumnModel().getColumn(0).setMaxWidth(25);
+
+        tablaInventario.getColumnModel().getColumn(0).setMinWidth(300);
+        tablaInventario.getColumnModel().getColumn(0).setMaxWidth(300);
         tablaInventario.getColumnModel().getColumn(0).setCellRenderer(alinear);
-        tablaInventario.getColumnModel().getColumn(1).setMinWidth(300);
-        tablaInventario.getColumnModel().getColumn(1).setMaxWidth(300);
+        tablaInventario.getColumnModel().getColumn(1).setMinWidth(130);
+        tablaInventario.getColumnModel().getColumn(1).setMaxWidth(130);
         tablaInventario.getColumnModel().getColumn(1).setCellRenderer(alinear);
-        tablaInventario.getColumnModel().getColumn(2).setMinWidth(130);
-        tablaInventario.getColumnModel().getColumn(2).setMaxWidth(130);
+        tablaInventario.getColumnModel().getColumn(2).setMinWidth(120);
+        tablaInventario.getColumnModel().getColumn(2).setMaxWidth(120);
         tablaInventario.getColumnModel().getColumn(2).setCellRenderer(alinear);
-        tablaInventario.getColumnModel().getColumn(3).setMinWidth(120);
-        tablaInventario.getColumnModel().getColumn(3).setMaxWidth(120);
+        tablaInventario.getColumnModel().getColumn(3).setMinWidth(70);
+        tablaInventario.getColumnModel().getColumn(3).setMaxWidth(70);
         tablaInventario.getColumnModel().getColumn(3).setCellRenderer(alinear);
-        tablaInventario.getColumnModel().getColumn(4).setMinWidth(60);
-        tablaInventario.getColumnModel().getColumn(4).setMaxWidth(60);
         tablaInventario.getColumnModel().getColumn(4).setCellRenderer(alinear);
-        tablaInventario.getColumnModel().getColumn(5).setCellRenderer(alinear);
         tablaInventario.setRowHeight(17);
     }
 
@@ -237,13 +211,13 @@ public class InventarioPanel extends javax.swing.JPanel {
         model = new DefaultTableModel();
         alinear = new DefaultTableCellRenderer();
         alinear.setHorizontalAlignment(SwingConstants.CENTER);
-        model.addColumn("Id");
-        model.addColumn("Nombre");
-        model.addColumn("Marca");
-        model.addColumn("Modelo");
-        model.addColumn("Cantidad");
-        model.addColumn("Precio");
-        datos = new String[6];
+     
+        model.addColumn("NOMBRE");
+        model.addColumn("MARCA");
+        model.addColumn("MODELO");
+        model.addColumn("CANTIDAD");
+        model.addColumn("PRECIO");
+        datos = new String[5];
         tablaInventario.setModel(model);
 
         /**
@@ -253,25 +227,25 @@ public class InventarioPanel extends javax.swing.JPanel {
 
         try {
 
-            con = test.getConnection();
+            con = Conexion.getConnection();
             pps = con.prepareStatement("SELECT * FROM inventario");
             rs = pps.executeQuery();
             while (rs.next()) {
-                datos[0] = rs.getString("id_producto");
-                datos[1] = rs.getString("nombre_producto");
-                datos[2] = rs.getString("marca");
-                datos[3] = rs.getString("modelo");
-                datos[4] = rs.getString("cantidad");
-                datos[5] = rs.getString("precio_venta");
+              
+                datos[0] = rs.getString("NOMBRE");
+                datos[1] = rs.getString("MARCA");
+                datos[2] = rs.getString("MODELO");
+                datos[3] = rs.getString("CANTIDAD");
+                datos[4] = rs.getString("PRECIO_VENTA");
                 model.addRow(datos);
             }
 
         } catch (SQLException ex) {
             ex.printStackTrace(System.out);
         } finally {
-            test.close(con);
-            test.close(pps);
-            test.close(rs);
+            Conexion.close(con);
+            Conexion.close(pps);
+            Conexion.close(rs);
         }
     }
 
