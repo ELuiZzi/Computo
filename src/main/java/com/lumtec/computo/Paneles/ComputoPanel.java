@@ -218,7 +218,7 @@ public class ComputoPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_agregarButtonMouseEntered
 
     private void inventarioButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_inventarioButtonMouseClicked
-        Go.to(Home.inventarioPanel);
+        Go.to(new InventarioPanel());
     }//GEN-LAST:event_inventarioButtonMouseClicked
 
     private void finanzasButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_finanzasButtonMouseClicked
@@ -230,7 +230,7 @@ public class ComputoPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_venderButtonMouseClicked
 
     private void faltantesButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_faltantesButtonMouseClicked
-        Go.to(Home.faltantesPanel);
+        Go.to(new FaltantesPanel());
     }//GEN-LAST:event_faltantesButtonMouseClicked
 
     private void editarButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editarButtonMouseClicked

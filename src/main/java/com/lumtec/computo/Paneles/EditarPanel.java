@@ -26,15 +26,16 @@ public class EditarPanel extends javax.swing.JPanel {
     }
 
     //Este constructor precarga las cajas.
-    public EditarPanel(int id) {
+    public EditarPanel(int id, String nombre) {
         initComponents();
         initOwnComponents();
-        //ivaButton.add(Images.getIvaDisable(), posi);
+
         try {
+
+        } catch (Exception ex) {
             prod.setIdProducto(id);
-        } catch (NumberFormatException ex) {
         }
-        prod = inve.select(prod);
+        prod = inve.select(id, nombre);
         /*
         LLenar las cajas con la información del producto
         1° Iniciando con la caja de busqueda, poniendo el Forefround en negro 
@@ -416,14 +417,19 @@ public class EditarPanel extends javax.swing.JPanel {
 
     private void busquedaBoxKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_busquedaBoxKeyPressed
 
+        int id = 0;
+        String nombre = null;
+
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             inve = new InventarioDAOJDBC();
 
             try {
-                prod.setIdProducto(Integer.parseInt(busquedaBox.getText()));
+                id = Integer.parseInt(busquedaBox.getText());
             } catch (NumberFormatException ex) {
+                nombre = busquedaBox.getText();
             }
-            prod = inve.select(prod);
+
+            prod = inve.select(id, nombre);
             llenarCajas();
 
         } else if (evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
@@ -689,6 +695,7 @@ public class EditarPanel extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     private void llenarCajas() {
+        busquedaBox.setText(Integer.toString(prod.getIdProducto()));
         porcentajeTotal = prod.getPorcentajeGanancia() + prod.getPorcentajeReinversion();
         nombreProductoBox.setText(prod.getNombreProducto());
         marcaBox.setText(prod.getMarca());
@@ -834,6 +841,6 @@ public class EditarPanel extends javax.swing.JPanel {
         actualizarButton.setBackground(Colors.button);
 
         //Métodos
-       // ivaButton.add(Images.getIvaEnable(), posi);
+        // ivaButton.add(Images.getIvaEnable(), posi);
     }
 }

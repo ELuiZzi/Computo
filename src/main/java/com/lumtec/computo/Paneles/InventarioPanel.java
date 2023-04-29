@@ -117,7 +117,7 @@ public class InventarioPanel extends javax.swing.JPanel {
             conf.eliminarId("inventario", tablaInventario, con, pps);
             rellenarTabla();
         } else if (evt.getKeyCode() == KeyEvent.VK_E) {
-            sc.editProd(tablaInventario);
+            sc.editarProducto(tablaInventario);
         } else if (evt.getKeyCode() == KeyEvent.VK_V) {
             sc.sell(tablaInventario);
         }
@@ -228,7 +228,7 @@ public class InventarioPanel extends javax.swing.JPanel {
         try {
 
             con = Conexion.getConnection();
-            pps = con.prepareStatement("SELECT * FROM inventario");
+            pps = con.prepareStatement("SELECT NOMBRE, MARCA, MODELO, CANTIDAD, PRECIO_VENTA FROM inventario");
             rs = pps.executeQuery();
             while (rs.next()) {
               

@@ -1,23 +1,35 @@
 package com.lumtec.computo.Paneles;
 
 import com.lumtec.computo.Colors;
-import com.lumtec.computo.Faltante;
 import com.lumtec.computo.Faltantes.*;
+import com.lumtec.computo.Go;
 import com.lumtec.computo.Imagenes.Images;
+import com.lumtec.computo.Producto;
 import java.awt.event.KeyEvent;
 import org.netbeans.lib.awtextra.AbsoluteConstraints;
 
 public class NuevoFaltantePanel extends javax.swing.JPanel {
 
+    Producto prod = new Producto();
     FaltantesDAO faltDAO = new FaltantesDAOJDBC();
-    Faltante falt = new Faltante();
-    ;
     AbsoluteConstraints posi = new AbsoluteConstraints(0, 0);
 
     public NuevoFaltantePanel() {
         initComponents();
         initOwnComponents();
 
+    }
+
+    public NuevoFaltantePanel(int id, String nombre) {
+        initComponents();
+        initOwnComponents();
+
+        prod = faltDAO.select(id, nombre);
+
+        /*
+            Se llenan las Cajas
+         */
+        llenarCajas(prod);
     }
 
     @SuppressWarnings("unchecked")
@@ -262,21 +274,23 @@ public class NuevoFaltantePanel extends javax.swing.JPanel {
             Asigamos el id del producto con la ayuda de un try-catch, en caso de algun error,
             del cual se seleccionara todo la infromación de la base de datos.
              */
+            int id = 0;
+            String nombre = null;
             try {
-                falt.setId_producto(Integer.parseInt(busquedaBox.getText()));
+                id = Integer.parseInt(busquedaBox.getText());
             } catch (NumberFormatException ex) {
-                busquedaBox.setText("Ingresar ID Válido");
+                nombre = busquedaBox.getText();
             }
 
             /*
             Al objeto faltante se completa con los datos obtenidos en la busqueda.
              */
-            falt = faltDAO.select(falt.getId_producto());
+            prod = faltDAO.select(id, nombre);
 
             /*
             Se llenan las Cajas
              */
-            llenarCajas(falt);
+            llenarCajas(prod);
         }
     }//GEN-LAST:event_busquedaBoxKeyPressed
 
@@ -313,13 +327,13 @@ public class NuevoFaltantePanel extends javax.swing.JPanel {
         /*
         Asignar valores de las cajas al Faltante, ya sea nuevo o actualizacion
          */
-        falt.setNombre_producto(nombreBox.getText());
-        falt.setMarca(marcaBox.getText());
-        falt.setModelo(modeloBox.getText());
-        falt.setColor(colorBox.getText());
-        falt.setMarca(marcaBox.getText());
-        falt.setProvedor(provedorBox.getText());
-        falt.setDescripcion(descripcionBox.getText());
+        prod.setNombreProducto(nombreBox.getText());
+        prod.setMarca(marcaBox.getText());
+        prod.setModelo(modeloBox.getText());
+        prod.setColor(colorBox.getText());
+        prod.setMarca(marcaBox.getText());
+        prod.setProvedor(provedorBox.getText());
+        prod.setDescripcion(descripcionBox.getText());
 
         /*
         Los valores númericos van en un try-catch, en caso de que den un error, no se lleva a cabo la actualización en la Base de Datos
@@ -328,18 +342,19 @@ public class NuevoFaltantePanel extends javax.swing.JPanel {
             id = Integer.parseInt(getBusquedaBox());
             cantidad = Integer.parseInt(cantidadBox.getText());
             precioCompra = Float.parseFloat(precioBox.getText());
-            falt.setCantidad(cantidad);
-            falt.setPrecio_compra(precioCompra);
+            prod.setCantidad(cantidad);
+            prod.setPrecioCompra(precioCompra);
 
             /*
             Si el ID es exitente, se actualiza, de lo contario y en caso de que el id producto sea nulo se agrega
              */
-            if (falt.getId_producto() == id) {
-                faltDAO.editar(id, falt);
+            if (prod.getIdProducto() == id) {
+                faltDAO.editar(id, prod);
             } else {
-                faltDAO.nuevoFaltante(falt);
+                faltDAO.nuevoFaltante(prod);
             }
 
+            Go.to(new FaltantesPanel());
         } catch (java.lang.NumberFormatException ex) {
             cantidadBox.setText(("Dato Inválido"));
             precioBox.setText("Dato Inválido");
@@ -400,15 +415,16 @@ public class NuevoFaltantePanel extends javax.swing.JPanel {
     /*
     Llenar las cajas con los datos de un ubjeto tipo Faltante
      */
-    private void llenarCajas(Faltante falt) {
-        nombreBox.setText(falt.getNombre_producto());
-        marcaBox.setText(falt.getMarca());
-        modeloBox.setText(falt.getModelo());
-        colorBox.setText(falt.getColor());
-        cantidadBox.setText(Integer.toString(falt.getCantidad()));
-        precioBox.setText(Float.toString(falt.getPrecio_compra()));
-        descripcionBox.setText(falt.getDescripcion());
-        provedorBox.setText(falt.getProvedor());
+    private void llenarCajas(Producto prod) {
+        busquedaBox.setText(Integer.toString(prod.getIdProducto()));
+        nombreBox.setText(prod.getNombreProducto());
+        marcaBox.setText(prod.getMarca());
+        modeloBox.setText(prod.getModelo());
+        colorBox.setText(prod.getColor());
+        cantidadBox.setText(Integer.toString(prod.getCantidad()));
+        precioBox.setText(Double.toString(prod.getPrecioCompra()));
+        descripcionBox.setText(prod.getDescripcion());
+        provedorBox.setText(prod.getProvedor());
     }
 
     private void activarBotonIva() {
@@ -447,6 +463,6 @@ public class NuevoFaltantePanel extends javax.swing.JPanel {
 
         aplicarButton.setBackground(Colors.button);
         //Ajustar mas tarde
-        ivaButton.add(Images.getIvaEnable(), posi);
+        // ivaButton.add(Images.getIvaEnable(), posi);
     }
 }

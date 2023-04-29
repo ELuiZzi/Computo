@@ -15,6 +15,8 @@ public class Search {
     Object[] filFilt, filFilt2;
     //Este char sirve para almacenar el caracter anterior.
     static char past = '\0';
+    
+    private static final int columna = 0; //Indice de columna que se va a buscar
 
     public Search(JTable inve) {
         //Cuando la clase carga, selecciona la LISTA ORIGINAL de la tabla, para almacenarla
@@ -68,7 +70,7 @@ public class Search {
             //Ciclo duración: El número ORIGINAL de filas
             for (int i = 0; i < filas.length; i++) {
                 filaTemp = (String[]) filas[i];
-                String texto = filaTemp[1];
+                String texto = filaTemp[columna];
                 for (int l = 0; l < texto.length(); l++) {
                     if (texto.charAt(l) == Character.toLowerCase(C) || texto.charAt(l) == Character.toUpperCase(C)) {
                         //Aumentar el número de productos que cumplen el parentezco
@@ -81,7 +83,7 @@ public class Search {
             filFilt = new Object[cont];
             for (int i = 0; i < filas.length; i++) {
                 filaTemp = (String[]) filas[i];
-                String texto = filaTemp[1];
+                String texto = filaTemp[columna];
                 for (int l = 0; l < texto.length(); l++) {
                     if (texto.charAt(l) == Character.toLowerCase(C) || texto.charAt(l) == Character.toUpperCase(C)) {
                         //Agregar al filtro, la columna que cumplió el parentezco
@@ -99,7 +101,7 @@ public class Search {
             //Ciclo for, duracion: Número de filas filtradas previamente
             for (int i = 0; i < filFilt.length; i++) {
                 filaTemp = (String[]) filFilt[i];
-                String texto = filaTemp[1];
+                String texto = filaTemp[columna];
                 for (int l = 0; l < texto.length(); l++) {
                     if (texto.charAt(l) == Character.toUpperCase(past) || texto.charAt(l) == Character.toLowerCase(past)) {
                         ++l;
@@ -118,7 +120,7 @@ public class Search {
             filFilt2 = new Object[cont];
             for (int i = 0; i < filFilt.length; i++) {
                 filaTemp = (String[]) filFilt[i];
-                String texto = filaTemp[1];
+                String texto = filaTemp[columna];
                 for (int l = 0; l < texto.length(); l++) {
                     if (texto.charAt(l) == Character.toUpperCase(past) || texto.charAt(l) == Character.toLowerCase(past)) {
                         ++l;
@@ -152,7 +154,7 @@ public class Search {
             System.out.println("Ultima Letra");
             for (int i = 0; i < filas.length; i++) {
                 filaTemp = (String[]) filas[i];
-                String texto = filaTemp[1];
+                String texto = filaTemp[columna];
                 for (int l = 0; l < texto.length(); l++) {
                     if (texto.charAt(l) == Character.toUpperCase(B) || texto.charAt(l) == Character.toLowerCase(B)) {
                         past = B; //Último carácter, 'past' tomará su valor
@@ -166,7 +168,7 @@ public class Search {
             filFilt = new Object[cont];
             for (int i = 0; i < filas.length; i++) {
                 filaTemp = (String[]) filas[i];
-                String texto = filaTemp[1];
+                String texto = filaTemp[columna];
                 for (int l = 0; l < texto.length(); l++) {
                     if (texto.charAt(l) == Character.toUpperCase(B) || texto.charAt(l) == Character.toLowerCase(B)) {
                         filFilt[posi] = filas[i];
@@ -184,7 +186,7 @@ public class Search {
             past = B; //Varios carácteres, 'past' tomá el último carácter de la cadena.
             for (int i = 0; i < filas.length; i++) {
                 filaTemp = (String[]) filas[i];
-                String texto = filaTemp[1];
+                String texto = filaTemp[columna];
                 for (int l = 0; l < texto.length(); l++) {
                     if (texto.charAt(l) == Character.toUpperCase(A) || texto.charAt(l) == Character.toLowerCase(A)) {
                         ++l;
@@ -203,7 +205,7 @@ public class Search {
             filFilt = new Object[cont];
             for (int i = 0; i < filas.length; i++) {
                 filaTemp = (String[]) filas[i];
-                String texto = filaTemp[1];
+                String texto = filaTemp[columna];
                 for (int l = 0; l < texto.length(); l++) {
                     if (texto.charAt(l) == Character.toUpperCase(A) || texto.charAt(l) == Character.toLowerCase(A)) {
                         ++l;

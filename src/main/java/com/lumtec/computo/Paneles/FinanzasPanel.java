@@ -70,6 +70,7 @@ public class FinanzasPanel extends javax.swing.JPanel {
 
         jTabbedPane1.setBackground(new java.awt.Color(204, 0, 204));
         jTabbedPane1.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        jTabbedPane1.setForeground(new java.awt.Color(255, 255, 255));
         jTabbedPane1.setMinimumSize(new java.awt.Dimension(860, 410));
         jTabbedPane1.setPreferredSize(new java.awt.Dimension(860, 410));
 
@@ -168,7 +169,7 @@ public class FinanzasPanel extends javax.swing.JPanel {
         Banner.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 7, 10, 30));
 
         seleccionarBoton.setBackground(new java.awt.Color(215, 215, 215));
-        seleccionarBoton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        seleccionarBoton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         seleccionarBoton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 seleccionarBotonMouseClicked(evt);
@@ -251,7 +252,7 @@ public class FinanzasPanel extends javax.swing.JPanel {
         FinanzasPanel.add(gananLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 90, 90, -1));
 
         copyButton.setBackground(new java.awt.Color(70, 73, 75));
-        copyButton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        copyButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         copyButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 copyButtonMouseClicked(evt);

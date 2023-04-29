@@ -11,6 +11,7 @@ import com.lumtec.computo.Paneles.EditarPanel;
 import com.lumtec.computo.Paneles.FaltantesPanel;
 import com.lumtec.computo.Paneles.FinanzasPanel;
 import com.lumtec.computo.Paneles.InventarioPanel;
+import com.lumtec.computo.Paneles.NuevoFaltantePanel;
 import com.lumtec.computo.Paneles.VenderPanel;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -212,7 +213,7 @@ public class Home extends javax.swing.JFrame {
         cerrarButton.setFont(new java.awt.Font("Arial", 1, 13)); // NOI18N
         cerrarButton.setForeground(new java.awt.Color(255, 255, 255));
         cerrarButton.setText("Cerrar");
-        cerrarButton.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        cerrarButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         cerrarButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 cerrarButtonMouseClicked(evt);
@@ -472,10 +473,9 @@ public class Home extends javax.swing.JFrame {
     //Cargar Todas las ventanas
     public static final JPanel computoPanel = new ComputoPanel();
     public static final JPanel agregarProdutcoPanel = new AgregarProductoPanel();
-    public static final JPanel inventarioPanel = new InventarioPanel();
     public static final JPanel editarProdutcoPanel = new EditarPanel();
     public static final JPanel venderProdutcoPanel = new VenderPanel();
-    public static final JPanel faltantesPanel = new FaltantesPanel();
+    public static final JPanel nuevoFaltantePanel = new NuevoFaltantePanel();
     public static final JPanel finanzasPanel = new FinanzasPanel();
 
 }

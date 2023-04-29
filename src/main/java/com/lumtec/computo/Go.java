@@ -19,7 +19,6 @@ public class Go {
         Home.background.repaint();
     }
 
-
     public static void to(JPanel panel) {
         //Eliminar contenido Actual
         vaciarPanel();
@@ -30,13 +29,13 @@ public class Go {
     }
 
     //Ventana para shortcuts
-    public void editarProductoSelec(int id) {
-        p = new EditarPanel(id);
+    public void editarProductoSelec(int id, String nombre) {
+        p = new EditarPanel(id, nombre);
         to(p);
     }
 
-    public void venderProductoSelec(int id) {
-        p = new VenderPanel(id);
+    public void venderProductoSelec(int id, String nombre) {
+        p = new VenderPanel(id, nombre);
         to(p);
     }
 }

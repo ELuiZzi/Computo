@@ -7,13 +7,11 @@ import ConexionBD.Conexion;
 import java.sql.*;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 public class InventarioDAOJDBC implements InventarioDAO {
 
-    Producto prod;
+    Producto producto;
     FaltantesDAO falt = new FaltantesDAOJDBC();
     private Connection conexionTransaccional;
 
@@ -34,7 +32,7 @@ public class InventarioDAOJDBC implements InventarioDAO {
 
         try {
             con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
-            pps = con.prepareStatement("INSERT INTO inventario (NOMBRE,MARCA,CANTIDAD,COLOR,MODELO,DESCRIPCION,PROVEDOR,PRECIO_COMPRA, PRECIO_VENTA, GANANCIA, REINVERSION, PORCENAJE_GANANCIA, PORCENTAJE_REINVERSION, GARANTIA) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
+            pps = con.prepareStatement("INSERT INTO inventario (NOMBRE,MARCA,CANTIDAD,COLOR,MODELO,DESCRIPCION,PROVEDOR,PRECIO_COMPRA, PRECIO_VENTA, GANANCIA, REINVERSION, PORCENTAJE_GANANCIA, PORCENTAJE_REINVERSION, GARANTIA) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
 
             pps.setString(1, prod.getNombreProducto());
             pps.setString(2, prod.getMarca());
@@ -55,10 +53,11 @@ public class InventarioDAOJDBC implements InventarioDAO {
 
             JOptionPane.showMessageDialog(null, "Producto Agregado Exitosamente");
         } catch (SQLException ex) {
-            if(ex.getMessage().equals("Duplicate entry 'BD' for key 'inventario.NOMBRE_UNIQUE'")){
+            if (ex.getMessage().equals("Duplicate entry 'BD' for key 'inventario.NOMBRE_UNIQUE'")) {
                 JOptionPane.showMessageDialog(null, "El nombre ya existe en la BD");
             }
-            
+            ex.printStackTrace();
+
         } finally {
             //Cerrar Conexiones
             Conexion.close(con);
@@ -86,52 +85,59 @@ public class InventarioDAOJDBC implements InventarioDAO {
     }
 
     @Override
-    public Producto select(Producto produ) {
-        prod = new Producto();
-        Connection con;
-        PreparedStatement pps;
-        ResultSet rs;
+    public Producto select(int idS, String nombreS) {
+        producto = new Producto();
+        Connection con = null;
+        PreparedStatement pps = null;
+        ResultSet rs = null;
         try {
             con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
-            pps = con.prepareStatement("SELECT * FROM inventario WHERE id_producto= " + produ.getIdProducto() + "");
+            pps = con.prepareStatement("SELECT * FROM inventario WHERE ID = " + idS + " OR  NOMBRE = '" + nombreS + "'");
             rs = pps.executeQuery();
             if (rs.next()) {
-                String nombre = rs.getString("nombre_producto");
-                String marca = rs.getString("marca");
-                String color = rs.getString("color");
-                String modelo = rs.getString("modelo");
-                String descripcion = rs.getString("descripcion");
-                String provedor = rs.getString("provedor");
-                String garantia = rs.getString("garantia");
-                float precioCompra = rs.getFloat("precio_compra");
-                float precioVenta = rs.getFloat("precio_venta");
-                float porcentajeGanancia = rs.getFloat("porcentajeGanancia");
-                float porcentajeReinversion = rs.getFloat("porcentajeReinversion");
-                float ganancia = rs.getFloat("ganancia");
-                float reinversion = rs.getFloat("reinversion");
-                int cantidad = rs.getInt("cantidad");
-                int idds = rs.getInt("id_producto");
+                String nombre = rs.getString("NOMBRE");
+                String marca = rs.getString("MARCA");
+                String color = rs.getString("COLOR");
+                String modelo = rs.getString("MODELO");
+                String descripcion = rs.getString("DESCRIPCION");
+                String provedor = rs.getString("PROVEDOR");
+                String garantia = rs.getString("GARANTIA");
+                float precioCompra = rs.getFloat("PRECIO_COMPRA");
+                float precioVenta = rs.getFloat("PRECIO_VENTA");
+                float porcentajeGanancia = rs.getFloat("PORCENTAJE_GANANCIA");
+                float porcentajeReinversion = rs.getFloat("PORCENTAJE_REINVERSION");
+                float ganancia = rs.getFloat("GANANCIA");
+                float reinversion = rs.getFloat("REINVERSION");
+                int cantidad = rs.getInt("CANTIDAD");
+                int id = rs.getInt("ID");
 
-                prod.setIdProducto(idds);
-                prod.setNombreProducto(nombre);
-                prod.setMarca(marca);
-                prod.setColor(color);
-                prod.setModelo(modelo);
-                prod.setProvedor(provedor);
-                prod.setDescripcion(descripcion);
-                prod.setGarantia(garantia);
-                prod.setPrecioCompra(precioCompra);
-                prod.setPrecioVenta(precioVenta);
-                prod.setGanancia(ganancia);
-                prod.setReinversion(reinversion);
-                prod.setCantidad(cantidad);
-                prod.setPorcentajeGanancia(porcentajeGanancia);
-                prod.setPorcentajeReinversion(porcentajeReinversion);
+                producto.setIdProducto(id);
+                producto.setNombreProducto(nombre);
+                producto.setMarca(marca);
+                producto.setColor(color);
+                producto.setModelo(modelo);
+                producto.setProvedor(provedor);
+                producto.setDescripcion(descripcion);
+                producto.setGarantia(garantia);
+                producto.setPrecioCompra(precioCompra);
+                producto.setPrecioVenta(precioVenta);
+                producto.setGanancia(ganancia);
+                producto.setReinversion(reinversion);
+                producto.setCantidad(cantidad);
+                producto.setPorcentajeGanancia(porcentajeGanancia);
+                producto.setPorcentajeReinversion(porcentajeReinversion);
             }
 
         } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            if (this.conexionTransaccional == null) {
+                Conexion.close(con);
+                Conexion.close(pps);
+                Conexion.close(rs);
+            }
         }
-        return prod;
+        return producto;
     }
 
     @Override
@@ -140,14 +146,13 @@ public class InventarioDAOJDBC implements InventarioDAO {
         PreparedStatement pps;
         try {
             con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
-            pps = con.prepareStatement("UPDATE inventario SET nombre_producto=?, marca=?, modelo=?, color=?, descripcion=?, cantidad=?, precio_compra=?, precio_venta=?, ganancia=?, reinversion=?, porcentajeGanancia = ?, porcentajeReinversion = ?, provedor = ?, garantia= ? WHERE id_producto = " + prod.getIdProducto() + "");
+            pps = con.prepareStatement("UPDATE inventario SET NOMBRE=?, MARCA=?, MODELO=?, COLOR=?, DESCRIPCION=?, CANTIDAD=?, PRECIO_COMPRA=?, PRECIO_VENTA=?, GANANCIA=?, REINVERSION=?, PORCENTAJE_GANANCIA = ?, PORCENTAJE_REINVERSION = ?, PROVEDOR = ?, GARANTIA= ? WHERE ID = " + prod.getIdProducto() + "");
             pps.setString(1, prod.getNombreProducto());
             pps.setString(2, prod.getMarca());
             pps.setString(3, prod.getModelo());
             pps.setString(4, prod.getColor());
             pps.setString(5, prod.getDescripcion());
             pps.setInt(6, prod.getCantidad());
-       
             pps.setDouble(7, prod.getPrecioCompra());
             pps.setDouble(8, prod.getPrecioVenta());
             pps.setDouble(9, prod.getGanancia());
@@ -164,121 +169,35 @@ public class InventarioDAOJDBC implements InventarioDAO {
     }
 
     @Override
-    public void vender(int cantidad, Producto prod) {
-        Connection con = null;
-        PreparedStatement pps = null;
-        int cantidad_actual = prod.getCantidad() - cantidad;
-        int idProducto = prod.getIdProducto();
-        try {
-            con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
-            //Restar de inventario
-            pps = con.prepareStatement("UPDATE inventario SET cantidad= ? WHERE id_producto = ?");
-            pps.setInt(1, cantidad_actual);
-            pps.setInt(2, idProducto);
-            pps.executeUpdate();
-            //Sumar en faltantes
-            pps = con.prepareStatement("INSERT INTO faltantes (nombre_producto, marca, color, modelo, cantidad, descripcion, precio_compra, provedor) VALUES (?,?,?,?,?,?,?,?)");
-            pps.setString(1, prod.getNombreProducto());
-            pps.setString(2, prod.getMarca());
-            pps.setString(3, prod.getColor());
-            pps.setString(4, prod.getModelo());
-            pps.setInt(5, cantidad);
-            pps.setString(6, prod.getDescripcion());
-            pps.setDouble(7, prod.getPrecioCompra());
-            pps.setString(8, prod.getProvedor());
-            pps.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            if (this.conexionTransaccional == null) {
-                Conexion.close(con);
-            }
-            Conexion.close(pps);
-        }
-
-    }
-
-    @Override
-    public void venderP1(int cant, Producto prod) {
+    public void venderP1(int cantidadVendida, Producto prod) {
         /*
         Se encargar de quitar del inventario el número de productos vendidos
          */
 
         Connection con = null;
         PreparedStatement pps = null;
-        int cantidadActual = prod.getCantidad() - cant;
+        int cantidadNueva = prod.getCantidad() - cantidadVendida;
         int idProducto = prod.getIdProducto();
-        try {
-            con = this.conexionTransaccional != null ? this.conexionTransaccional : con;
 
-            pps = con.prepareStatement("UPDATE inventario SET cantidad= ? WHERE id_producto = ?");
-            pps.setInt(1, cantidadActual);
+        try {
+            con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
+
+            pps = con.prepareStatement("UPDATE inventario SET cantidad = ? WHERE id = ?");
+            pps.setInt(1, cantidadNueva);
             pps.setInt(2, idProducto);
             pps.executeUpdate();
+            System.out.println("Cantidad en Inventario Actualizada");
         } catch (SQLException ex) {
             ex.printStackTrace(System.out);
         } finally {
             if (this.conexionTransaccional == null) {
                 Conexion.close(con);
+                Conexion.close(pps);
             }
         }
     }
 
-    @Override
-    public void venderP2(int cantidad, int id, Producto prod) {
-        /*
-        Agregar o actualiza la lista de faltantes
-         */
-
-        Connection con = null;
-        PreparedStatement pps = null;
-        int cantidad_actual = prod.getCantidad() - cantidad;
-
-        double totalVenta = cantidad * prod.getPrecioCompra();
-
-        ResultSet rs;
-
-        try {
-            //Comprobar si en el registro de Faltantes ya está el producto
-            con = conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
-            pps = con.prepareStatement("SELECT * FROM faltantes WHERE id_producto = '" + id + "'");
-            rs = pps.executeQuery();
-            if (rs.next()) {
-                try {
-                    con = this.conexionTransaccional != null ? this.conexionTransaccional : con;
-                    pps = con.prepareStatement("UPDATE faltantes SET  cantidad = ?  WHERE id_producto = '" + id + "'");
-                    pps.setInt(1, (falt.getCantidad(prod.getIdProducto()) + cantidad));
-                    pps.executeUpdate();
-                } catch (SQLException ex) {
-                    ex.printStackTrace(System.out);
-                }
-            } else {
-                try {
-                    con = this.conexionTransaccional != null ? this.conexionTransaccional : con;
-                    pps = con.prepareStatement("INSERT INTO faltantes (nombre_producto, marca, color, modelo, cantidad, descripcion, precio_compra, id_producto, provedor) VALUES (?,?,?,?,?,?,?,?,?)");
-                    pps.setString(1, prod.getNombreProducto());
-                    pps.setString(2, prod.getMarca());
-                    pps.setString(3, prod.getColor());
-                    pps.setString(4, prod.getModelo());
-                    pps.setInt(5, cantidad);
-                    pps.setString(6, prod.getDescripcion());
-                    pps.setDouble(7, totalVenta);
-                    pps.setInt(8, prod.getIdProducto());
-                    pps.setString(9, prod.getProvedor());
-                    pps.executeUpdate();
-
-                } catch (SQLException ex1) {
-                    Logger.getLogger(InventarioDAOJDBC.class
-                            .getName()).log(Level.SEVERE, null, ex1);
-                }
-            }
-
-        } catch (SQLException ex) {
-            ex.printStackTrace(System.out);
-
-        }
-    }
-
+   
     @Override
     public boolean verificarExistencia(Producto prod) {
         existeProducto = false;
@@ -321,34 +240,50 @@ public class InventarioDAOJDBC implements InventarioDAO {
     }
 
     @Override
-    public void surtir(int id, int cantidad) {
-        Connection con;
-        PreparedStatement pps;
+    public void surtir(int id, String nombre, int cantidad, double precioCompra, String marca, String modelo, String color) {
+        Connection con = null;
+        PreparedStatement pps = null;
         try {
             con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
-            pps = con.prepareStatement("UPDATE inventario SET cantidad = ? WHERE id_producto = '" + id + "'");
+            pps = con.prepareStatement("UPDATE inventario SET CANTIDAD = ?, PRECIO_COMPRA = ?, MARCA = ?, MODELO = ?, COLOR = ?  WHERE ID = '" + id + "' OR NOMBRE ='" + nombre + "'");
             pps.setInt(1, cantidad);
+            pps.setDouble(2, precioCompra);
+            pps.setString(3, marca);
+            pps.setString(4, modelo);
+            pps.setString(5, color);
             pps.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
+        } finally {
+            if (this.conexionTransaccional == null) {
+                Conexion.close(con);
+                Conexion.close(pps);
+
+            }
         }
     }
 
     @Override
-    public int cantidadActual(int id) {
-        Connection con;
-        PreparedStatement pps;
-        ResultSet rs;
+    public int cantidadActual(int id, String nombre) {
+        Connection con = null;
+        PreparedStatement pps = null;
+        ResultSet rs = null;
         int cantidadActual = 0;
         try {
             con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
-            pps = con.prepareStatement("SELECT cantidad FROM inventario WHERE id_producto = " + id + "");
+            pps = con.prepareStatement("SELECT cantidad FROM inventario WHERE ID = " + id + " OR NOMBRE = '" + nombre + "'");
             rs = pps.executeQuery();
             if (rs.next()) {
                 cantidadActual = rs.getInt("cantidad");
             }
         } catch (SQLException ex) {
             System.out.println("Error en método cantidadActual(), seleccionando la cantidad");
+        } finally {
+            if (this.conexionTransaccional == null) {
+                Conexion.close(con);
+                Conexion.close(pps);
+                Conexion.close(rs);
+            }
         }
         return cantidadActual;
     }
@@ -408,5 +343,7 @@ public class InventarioDAOJDBC implements InventarioDAO {
         }
         return ventasTotal;
     }
+    
+       
 
 }

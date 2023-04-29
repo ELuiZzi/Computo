@@ -8,6 +8,8 @@ import com.lumtec.computo.Producto;
 import com.lumtec.computo.Vender.*;
 import com.lumtec.computo.Go;
 import ConexionBD.Conexion;
+import com.lumtec.computo.Faltantes.FaltantesDAO;
+import com.lumtec.computo.Faltantes.FaltantesDAOJDBC;
 import com.lumtec.computo.Home.Home;
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
@@ -43,7 +45,7 @@ public class VenderPanel extends javax.swing.JPanel {
         idBox.requestFocus();
     }
 
-    public VenderPanel(int id) {
+    public VenderPanel(int id, String nombre) {
 
         initComponents();
         initOwnComponents();
@@ -52,8 +54,8 @@ public class VenderPanel extends javax.swing.JPanel {
         for (int n = 0; n < Carrito.carrito.size(); n++) {
             modelo.addRow(Carrito.carrito.get(n));
         }
-        prod.setIdProducto(id);
-        prod = inve.select(prod);
+
+        prod = inve.select(id, nombre);
 
         idBox.setForeground(Colors.text);
         idBox.setText(Integer.toString(prod.getIdProducto()));
@@ -318,15 +320,16 @@ public class VenderPanel extends javax.swing.JPanel {
          */
 
         int id = 0;
-
+        String nombre = null;
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             try {
                 id = Integer.parseInt(idBox.getText());
-                prod.setIdProducto(id);
+
             } catch (NumberFormatException ex) {
+                nombre = idBox.getText();
             }
 
-            prod = inve.select(prod);
+            prod = inve.select(id, nombre);
             rellenar();
 
             cantidadBox.requestFocus();
@@ -407,12 +410,13 @@ public class VenderPanel extends javax.swing.JPanel {
             //Variables temporales
             //Se llaman a los valores de la tabla, que vienen en clase objeto.
             String idTemp = listaTabla.getValueAt(i, 0).toString();
+            String nombreTemp = listaTabla.getValueAt(i, 2).toString();
             int cantidadTemp = Integer.parseInt(listaTabla.getValueAt(i, 1).toString());
             String totalTemp = listaTabla.getValueAt(i, 3).toString();
 
             //Se convierten los Strings a tipo int
             int id = Integer.parseInt(idTemp);
-            prod.setIdProducto(id);
+
             float total = Float.parseFloat(totalTemp);
 
             try {
@@ -424,22 +428,28 @@ public class VenderPanel extends javax.swing.JPanel {
                 }
 
                 InventarioDAO inv = new InventarioDAOJDBC(con);
+                FaltantesDAO falt = new FaltantesDAOJDBC(con);
                 ven = new VentaDAOJDBC(con);
 
                 //Crea un objeto de la clase producto, con valores de la base de datos MySQL
-                prod = inv.select(prod);
+                if (con != null && !con.isClosed()) {
+                    prod = inv.select(id, nombreTemp);
 
-                // Quita del inve los productos vendidos.
-                inv.venderP1(cantidadTemp, prod);
+                    // Quita del inve los productos vendidos.
+                    inv.venderP1(cantidadTemp, prod);
+                    
+                    //Acumular la cantidad en faltantes
+                    falt.venderP2(id, prod, cantidad);
 
-                //Agregar o actualiza la lista de faltantes, para esto tenemos que crear un objeto de tipo Prodcuto, porque el método venderP2 funciona
-                inv.venderP2(cantidadTemp, id, prod);
-
-                // Agregar a la base de datos ventas, en donde se guardan las finanzas
-                ven.vender(prod, cantidadTemp, total);
+                    // Agregar a la base de datos ventas, en donde se guardan las finanzas
+                    ven.vender(prod, cantidadTemp, total);
+                } else {
+                    System.out.println("Conexion cerrada");
+                }
                 con.commit();
                 JOptionPane.showMessageDialog(null, "Venta Exitosa");
-
+                Carrito.carrito.clear();
+                Go.to(Home.computoPanel);
             } catch (SQLException ex) {
                 try {
                     //En caso de que falle algo en la base de datos, no efectuar ningún cambio.
@@ -447,11 +457,15 @@ public class VenderPanel extends javax.swing.JPanel {
                 } catch (SQLException exl) {
                     exl.printStackTrace();
                 }
-                ex.printStackTrace();
+
+            } finally {
+                Conexion.close(con);
+
             }
+
         }
         //Una vez vendidos los productos, se debe de eliminar el carritp
-        Carrito.carrito.clear();
+
 
     }//GEN-LAST:event_venderButtonMouseClicked
 
@@ -504,7 +518,7 @@ public class VenderPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_vaciButtonMouseExited
 
     private void inveButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_inveButtonMouseClicked
-        Go.to(Home.inventarioPanel);
+        Go.to(new InventarioPanel());
     }//GEN-LAST:event_inveButtonMouseClicked
 
     private void inveButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_inveButtonMouseEntered

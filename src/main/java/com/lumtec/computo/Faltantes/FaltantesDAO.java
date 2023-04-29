@@ -1,26 +1,37 @@
 package com.lumtec.computo.Faltantes;
 
-import com.lumtec.computo.Faltante;
+import com.lumtec.computo.Producto;
 
 public interface FaltantesDAO {
 
-    public Faltante select(int id);
+    public Producto select(int id, String nombre);
 
-    public void nuevoFaltante(Faltante falt);
+    public void nuevoFaltante(Producto prod);
 
-    public void editar(int id, Faltante falt);
+    public void editar(int id, Producto prod);
 
-    public void calcularGasto(int id);
-    
+    public void calcularGasto(int id, String nombre);
+
     public void calcularGastoTotal();
-    
-    public void eliminarFaltante(int id);
-    
-    public void editarCantidad(int id, int cantidadR);
-    
+
+    public void eliminarFaltante(int id, String nombre);
+
+    public void acumularCantidad(int id, String nombre, int cantidad);
+
+    public void disminuirCantidad(int id, String nombre, int cantidad);
+
     /*
     Devuelve la cantidad de un producto en la tabla faltantes
     Ej. A la hora de surtir, cuando queremos eliminar de faltantes los productos recién surtidos
-    */
-    public int getCantidad(int id);
+     */
+    public int getCantidad(int id, String nombre);
+
+    public String getMarca(int id, String nombre);
+
+    public String getModelo(int id, String nombre);
+
+    public String getColor(int id, String nombre);
+
+    public void venderP2(int id, Producto prod, int cantidad);
+
 }

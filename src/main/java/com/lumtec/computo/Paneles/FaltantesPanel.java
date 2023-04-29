@@ -1,13 +1,15 @@
 package com.lumtec.computo.Paneles;
 
 import com.lumtec.computo.Colors;
-import com.lumtec.computo.Faltante;
 import com.lumtec.computo.Faltantes.FaltantesDAO;
 import com.lumtec.computo.Faltantes.FaltantesDAOJDBC;
 import com.lumtec.computo.HerramientasTabla;
 import com.lumtec.computo.Inventario.InventarioDAO;
 import com.lumtec.computo.Inventario.InventarioDAOJDBC;
 import ConexionBD.Conexion;
+import com.lumtec.computo.Go;
+import com.lumtec.computo.Home.Home;
+import com.lumtec.computo.Shortcuts;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
@@ -35,7 +37,6 @@ public class FaltantesPanel extends javax.swing.JPanel {
     PreparedStatement pps;
     ResultSet rs;
     String[] datos;
-    Faltante falt;
 
     Font Arial = new java.awt.Font("Arial", 0, 12);
 
@@ -119,6 +120,11 @@ public class FaltantesPanel extends javax.swing.JPanel {
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jPanel2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jPanel2MouseClicked(evt);
+            }
+        });
         Panel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 366, 37, 37));
 
         add(Panel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 860, 410));
@@ -149,8 +155,14 @@ public class FaltantesPanel extends javax.swing.JPanel {
                 surtir();
             }
 
+        } else if (evt.getKeyCode() == KeyEvent.VK_E) {
+            Shortcuts.editarFaltante(tablaFaltantes);
         }
     }//GEN-LAST:event_tablaFaltantesKeyPressed
+
+    private void jPanel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MouseClicked
+        Go.to(Home.nuevoFaltantePanel);
+    }//GEN-LAST:event_jPanel2MouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -166,11 +178,11 @@ public class FaltantesPanel extends javax.swing.JPanel {
 
     private void rellenarTabla() {
 
-        datos = new String[7];
+        datos = new String[6];
         Alinear.setHorizontalAlignment(SwingConstants.CENTER);
 
         model = new DefaultTableModel();
-        model.addColumn("Id");
+
         model.addColumn("Producto");
         model.addColumn("Provedor");
         model.addColumn("Modelo");
@@ -181,29 +193,25 @@ public class FaltantesPanel extends javax.swing.JPanel {
         tablaFaltantes.setModel(model);
         tablaFaltantes.setFont(Arial);
 
-        tablaFaltantes.getColumnModel().getColumn(0).setMaxWidth(25);
-        tablaFaltantes.getColumnModel().getColumn(0).setMinWidth(25);
+        tablaFaltantes.getColumnModel().getColumn(0).setMaxWidth(250);
+        tablaFaltantes.getColumnModel().getColumn(0).setMinWidth(250);
         tablaFaltantes.getColumnModel().getColumn(0).setResizable(false);
         tablaFaltantes.getColumnModel().getColumn(0).setCellRenderer(Alinear);
-        tablaFaltantes.getColumnModel().getColumn(1).setMaxWidth(250);
-        tablaFaltantes.getColumnModel().getColumn(1).setMinWidth(250);
+        tablaFaltantes.getColumnModel().getColumn(1).setMaxWidth(60);
+        tablaFaltantes.getColumnModel().getColumn(1).setMinWidth(60);
         tablaFaltantes.getColumnModel().getColumn(1).setResizable(false);
         tablaFaltantes.getColumnModel().getColumn(1).setCellRenderer(Alinear);
-        tablaFaltantes.getColumnModel().getColumn(2).setMaxWidth(60);
-        tablaFaltantes.getColumnModel().getColumn(2).setMinWidth(60);
+        tablaFaltantes.getColumnModel().getColumn(2).setMaxWidth(110);
+        tablaFaltantes.getColumnModel().getColumn(2).setMinWidth(110);
         tablaFaltantes.getColumnModel().getColumn(2).setResizable(false);
         tablaFaltantes.getColumnModel().getColumn(2).setCellRenderer(Alinear);
-        tablaFaltantes.getColumnModel().getColumn(3).setMaxWidth(110);
-        tablaFaltantes.getColumnModel().getColumn(3).setMinWidth(110);
         tablaFaltantes.getColumnModel().getColumn(3).setResizable(false);
         tablaFaltantes.getColumnModel().getColumn(3).setCellRenderer(Alinear);
+        tablaFaltantes.getColumnModel().getColumn(4).setMaxWidth(70);
+        tablaFaltantes.getColumnModel().getColumn(4).setMinWidth(70);
         tablaFaltantes.getColumnModel().getColumn(4).setResizable(false);
         tablaFaltantes.getColumnModel().getColumn(4).setCellRenderer(Alinear);
-        tablaFaltantes.getColumnModel().getColumn(5).setMaxWidth(70);
-        tablaFaltantes.getColumnModel().getColumn(5).setMinWidth(70);
-        tablaFaltantes.getColumnModel().getColumn(5).setResizable(false);
         tablaFaltantes.getColumnModel().getColumn(5).setCellRenderer(Alinear);
-        tablaFaltantes.getColumnModel().getColumn(6).setCellRenderer(Alinear);
         tablaFaltantes.setRowHeight(17);
 
         try {
@@ -211,13 +219,13 @@ public class FaltantesPanel extends javax.swing.JPanel {
             pps = con.prepareStatement("SELECT * FROM faltantes");
             rs = pps.executeQuery();
             while (rs.next()) {
-                datos[0] = rs.getString("id_producto");
-                datos[1] = rs.getString("nombre_producto");
-                datos[2] = rs.getString("provedor");
-                datos[3] = rs.getString("modelo");
-                datos[4] = rs.getString("cantidad");
-                datos[5] = rs.getString("precio_compra");
-                datos[6] = rs.getString("precio_total");
+
+                datos[0] = rs.getString("nombre");
+                datos[1] = rs.getString("provedor");
+                datos[2] = rs.getString("modelo");
+                datos[3] = rs.getString("cantidad");
+                datos[4] = rs.getString("precio_compra");
+                datos[5] = rs.getString("precio_total");
 
                 model.addRow(datos);
             }
@@ -318,38 +326,42 @@ public class FaltantesPanel extends javax.swing.JPanel {
          Lo Primero es agregar la cantidad al Inventario
          */
 
+        Connection cone = Conexion.getConnection();
+
+        inve = new InventarioDAOJDBC(cone);
+        fal = new FaltantesDAOJDBC(cone);
+
         //Seleccionamos el ID que vamos a manejar, debe de ser el mismo en la tabla de Inventario como en la de Faltantes.
         //El ID se saca de la primer columna de la tabla y de la fila que esté seleccionada
-        int id = Integer.parseInt(tablaFaltantes.getValueAt(tablaFaltantes.getSelectedRow(), 0).toString());
+        String nombre = tablaFaltantes.getValueAt(tablaFaltantes.getSelectedRow(), 0).toString();
+        String marca = fal.getMarca(0, nombre);
+        String modelo = fal.getModelo(0, nombre);
+        String color = fal.getColor(0, nombre);
+        double precioCompra = Double.parseDouble(tablaFaltantes.getValueAt(tablaFaltantes.getSelectedRow(), 4).toString());
 
         //La cantidad nueva se encerrar en un try-catch, en caso de que se escriba un dato erroeno, o se cancele la acción
-        int cantidadNueva = 0;
+        int cantidadASurtir = 0;
 
         try {
-            cantidadNueva = Integer.parseInt(JOptionPane.showInputDialog("Cantidad"));
+            cantidadASurtir = Integer.parseInt(JOptionPane.showInputDialog("Cantidad"));
         } catch (NumberFormatException ex) {
             System.out.println("Cancelado/Dato no válido como cantidad");
         }
 
         //La cantidad que se va a agregar se saca sumando la cantidad actual mas la nueva cantidad
-        int cantidadTotalInve = inve.cantidadActual(id) + cantidadNueva;
-
-        //Antes de Surtir en Inventario, vamos a sacar la Cantidad total de Faltantes, que se logra restando a la cantidad actual la nueva cantidad
-        int cantidadTotalFalt = fal.getCantidad(id) - cantidadNueva;
+        int cantidadTotalInve = inve.cantidadActual(0, nombre) + cantidadASurtir;
 
         //Haremos un try-catch para iniziar los métodos con la misma conexión,en caso de que haya un error, haremos Rollback. 
-        Connection cone = null;
-        cone = Conexion.getConnection();
-        inve = new InventarioDAOJDBC(cone);
-        fal = new FaltantesDAOJDBC(cone);
         //Actualizamos Inventario, sumando los nuevos productos
-        inve.surtir(id, cantidadTotalInve);
+        inve.surtir(0, nombre, cantidadTotalInve, precioCompra, marca, modelo, color);
+
         //Actualizamos Faltantes, restando los nuevos productos
-        fal.editarCantidad(id, cantidadTotalFalt);
+        fal.disminuirCantidad(0, nombre, cantidadASurtir);
         //Una vez actualizadas las BD, y aprovechando la conexion, verificaremos si la cantidad actual del producto en Faltantes es menor a 0, en caso de que lo sea, se tendrá que eliminar
-        if (fal.getCantidad(id) <= 0) {
-            fal.eliminarFaltante(id);
+        if (fal.getCantidad(0, nombre) <= 0) {
+            fal.eliminarFaltante(0, nombre);
         }
+
         //Finalmente rellenamos las tablas con los nuevos cambios
         rellenarTabla();
         vaciarTabla(tablaProvedores);

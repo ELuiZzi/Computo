@@ -60,7 +60,6 @@ public class AgregarProductoPanel extends javax.swing.JPanel {
         jLabel13 = new javax.swing.JLabel();
         precioVentaBox = new javax.swing.JTextField();
         agregarButton = new javax.swing.JPanel();
-        jLabel14 = new javax.swing.JLabel();
         cantidadBox = new javax.swing.JTextField();
         precioIVABox = new javax.swing.JTextField();
         jLabel15 = new javax.swing.JLabel();
@@ -334,13 +333,6 @@ public class AgregarProductoPanel extends javax.swing.JPanel {
             }
         });
         agregarButton.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jLabel14.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
-        jLabel14.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel14.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel14.setText("Agregar");
-        agregarButton.add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 110, 30));
-
         jPanel1.add(agregarButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 365, 110, 30));
 
         cantidadBox.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
@@ -467,6 +459,7 @@ public class AgregarProductoPanel extends javax.swing.JPanel {
         /**
          * Agregar un Producto a la base de datos
          */
+        System.out.println("Click");
         inv = new InventarioDAOJDBC();
         
         crearProducto();
@@ -509,7 +502,6 @@ public class AgregarProductoPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
