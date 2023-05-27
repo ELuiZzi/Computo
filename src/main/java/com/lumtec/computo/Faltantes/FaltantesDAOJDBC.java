@@ -3,11 +3,14 @@ package com.lumtec.computo.Faltantes;
 import ConexionBD.Conexion;
 import com.lumtec.computo.Producto;
 import java.sql.*;
-import javax.swing.JOptionPane;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FaltantesDAOJDBC implements FaltantesDAO {
 
     Connection conexionTransaccional;
+
+    private List<Producto> listaFaltantes;
 
     public FaltantesDAOJDBC() {
     }
@@ -20,8 +23,8 @@ public class FaltantesDAOJDBC implements FaltantesDAO {
     public Producto select(int id, String nombre) {
         Producto prod = new Producto();
         Connection con = null;
-        PreparedStatement pps;
-        ResultSet rs;
+        PreparedStatement pps = null;
+        ResultSet rs = null;
 
         try {
             con = conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
@@ -32,10 +35,8 @@ public class FaltantesDAOJDBC implements FaltantesDAO {
                 prod.setIdProducto(rs.getInt("id_producto"));
                 prod.setNombreProducto(rs.getString("nombre"));
                 prod.setMarca(rs.getString("marca"));
-                prod.setColor(rs.getString("color"));
                 prod.setModelo(rs.getString("modelo"));
                 prod.setCantidad(rs.getInt("cantidad"));
-                prod.setDescripcion(rs.getString("descripcion"));
                 prod.setPrecioCompra(rs.getDouble("precio_compra"));
                 prod.setProvedor(rs.getString("provedor"));
             }
@@ -45,84 +46,90 @@ public class FaltantesDAOJDBC implements FaltantesDAO {
             if (this.conexionTransaccional == null) {
                 Conexion.close(con);
             }
+            Conexion.close(pps);
+            Conexion.close(rs);
         }
         return prod;
     }
 
     @Override
-    public int getCantidad(int id, String nombre) {
+    public int getCantidadActual(int id, String nombre) {
 
-        Connection con = null;
-        PreparedStatement pps = null;
-        ResultSet rs = null;
-        int cantidad = 0;
+        final Connection con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
+        final PreparedStatement pps;
+        final ResultSet rs;
+        int cantidadActual = 0;
         try {
-            con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();;
-            pps = con.prepareStatement("SELECT cantidad FROM faltantes WHERE id_producto = " + id + " OR nombre = '" + nombre + "'");
-            rs = pps.executeQuery();
-            if (rs.next()) {
-                cantidad = rs.getInt("cantidad");
+            pps = con.prepareStatement("SELECT CANTIDAD FROM faltantes WHERE id_producto = " + id + " OR NOMBRE = '" + nombre + "'");
+            try (pps) {
+                rs = pps.executeQuery();
+                try (rs) {
+                    if (rs.next()) {
+                        cantidadActual = rs.getInt("cantidad");
+                    }
+                }
             }
         } catch (SQLException ex) {
-            System.out.println("Error en el método getCantidad(), obteniendo de 'faltantes' la cantidad");
+            ex.printStackTrace(System.out);
         } finally {
             if (this.conexionTransaccional == null) {
                 Conexion.close(con);
-                Conexion.close(pps);
-                Conexion.close(rs);
             }
-
         }
-        return cantidad;
+        return cantidadActual;
     }
 
     @Override
-    public void nuevoFaltante(Producto prod) {
-        Connection con;
-        PreparedStatement pps;
+    public void nuevoFaltante(Producto producto) {
+        Connection con = null;
+        final PreparedStatement pps;
 
         try {
             con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
-            pps = con.prepareStatement("INSERT INTO faltantes (nombre, marca, color, modelo, cantidad, descripcion, precio_compra, provedor, id_producto) VALUES(?,?,?,?,?,?,?,?,?)");
-
-            pps.setString(1, prod.getNombreProducto());
-            pps.setString(2, prod.getMarca());
-            pps.setString(3, prod.getColor());
-            pps.setString(4, prod.getModelo());
-            pps.setInt(5, prod.getCantidad());
-            pps.setString(6, prod.getDescripcion());
-            pps.setDouble(7, prod.getPrecioCompra());
-            pps.setString(8, prod.getProvedor());
-            pps.setInt(9, prod.getIdProducto());
-            System.out.println("1");
-            pps.execute();
-            System.out.println("2");
-            JOptionPane.showMessageDialog(null, "Faltante Agregado");
+            pps = con.prepareStatement("INSERT INTO faltantes (nombre, marca, modelo, cantidad, precio_compra, provedor, id_producto) VALUES(?,?,?,?,?,?,?)");
+            try (pps) {
+                pps.setString(1, producto.getNombreProducto());
+                pps.setString(2, producto.getMarca());
+                pps.setString(3, producto.getModelo());
+                pps.setInt(4, producto.getCantidad());
+                pps.setDouble(5, producto.getPrecioCompra());
+                pps.setString(6, producto.getProvedor());
+                pps.setInt(7, producto.getIdProducto());
+                pps.execute();
+                System.out.println("Faltante Agregado");
+            }
         } catch (SQLException ex) {
             ex.printStackTrace(System.out);
+        } finally {
+            if (this.conexionTransaccional == null) {
+                Conexion.close(con);
+            }
         }
     }
 
     @Override
     public void editar(int id, Producto prod) {
-        Connection con;
-        PreparedStatement pps;
+        Connection con = null;
+        PreparedStatement pps = null;
 
         try {
             con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
-            pps = con.prepareStatement("UPDATE faltantes SET nombre = ?, marca = ? , color = ?, modelo = ?, cantidad = ?, descripcion = ?, precio_compra = ?, provedor = ?  WHERE id_producto = '" + id + "'");
+            pps = con.prepareStatement("UPDATE faltantes SET nombre = ?, marca = ? , modelo = ?, cantidad = ?, precio_compra = ?, provedor = ?  WHERE id_producto = '" + id + "'");
             pps.setString(1, prod.getNombreProducto());
             pps.setString(2, prod.getMarca());
-            pps.setString(3, prod.getColor());
             pps.setString(4, prod.getModelo());
             pps.setInt(5, prod.getCantidad());
-            pps.setString(6, prod.getDescripcion());
             pps.setDouble(7, prod.getPrecioCompra());
             pps.setString(8, prod.getProvedor());
             pps.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Faltante Actualizado");
+            System.out.println("Faltante Actualizado");
         } catch (SQLException ex) {
             ex.printStackTrace(System.out);
+        } finally {
+            if (this.conexionTransaccional == null) {
+                Conexion.close(con);
+            }
+            Conexion.close(pps);
         }
     }
 
@@ -130,7 +137,7 @@ public class FaltantesDAOJDBC implements FaltantesDAO {
     public void calcularGasto(int id, String nombre) {
 
         Connection con = null;
-        PreparedStatement pps;
+        PreparedStatement pps = null;
 
         Producto prod = select(id, nombre);
 
@@ -143,30 +150,38 @@ public class FaltantesDAOJDBC implements FaltantesDAO {
         } catch (SQLException ex) {
 
         } finally {
-            Conexion.close(con);
+            if (this.conexionTransaccional == null) {
+                Conexion.close(con);
+            }
+            Conexion.close(pps);
         }
     }
 
     @Override
     public void eliminarFaltante(int id, String nombre) {
-        Connection con;
-        PreparedStatement pps;
+        Connection con = null;
+        PreparedStatement pps = null;
 
         try {
             con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
             pps = con.prepareStatement("DELETE FROM faltantes WHERE id_producto = '" + id + "' OR nombre = '" + nombre + "'");
             pps.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Faltante Eliminado");
+            System.out.println("Faltante Eliminado");
         } catch (SQLException ex) {
             ex.printStackTrace(System.out);
+        } finally {
+            if (this.conexionTransaccional == null) {
+                Conexion.close(con);
+            }
+            Conexion.close(pps);
         }
     }
 
     @Override
     public void calcularGastoTotal() {
-        Connection con;
-        PreparedStatement pps;
-        ResultSet rs;
+        Connection con = null;
+        PreparedStatement pps = null;
+        ResultSet rs = null;
 
         try {
             con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
@@ -185,54 +200,56 @@ public class FaltantesDAOJDBC implements FaltantesDAO {
             }
         } catch (SQLException ex) {
             ex.printStackTrace(System.out);
+        } finally {
+            if (this.conexionTransaccional == null) {
+                Conexion.close(con);
+            }
+            Conexion.close(pps);
+            Conexion.close(rs);
         }
 
     }
 
-    /*
-    Verificar Cambios
-     */
     @Override
-    public void acumularCantidad(int id, String nombre, int cantidad) {
+    public void updateCantidad(int id, String nombre, int cantidad) {
         Connection con = null;
         PreparedStatement pps = null;
-
-        int cantidadAcumulada = getCantidad(id, nombre) + cantidad;
 
         try {
             con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
             pps = con.prepareStatement("UPDATE faltantes SET cantidad = ?  WHERE id_Producto = " + id + " OR nombre = '" + nombre + "'");
-            pps.setInt(1, cantidadAcumulada);
+            pps.setInt(1, cantidad);
             pps.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Faltante Actualizado");
+            System.out.println("Faltante Actualizado");
         } catch (SQLException ex) {
             ex.printStackTrace(System.out);
         } finally {
             if (this.conexionTransaccional == null) {
                 Conexion.close(con);
-                Conexion.close(pps);
+
             }
+            Conexion.close(pps);
         }
     }
 
     @Override
     public void disminuirCantidad(int id, String nombre, int cantidad) {
-        Connection con = null;
-        PreparedStatement pps = null;
+        final Connection con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
+        final PreparedStatement pps;
 
-        int cantidadDisminuida = getCantidad(id, nombre) - cantidad;
+        int cantidadDisminuida = getCantidadActual(id, nombre) - cantidad;
 
         try {
-            con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
             pps = con.prepareStatement("UPDATE faltantes SET cantidad = ?  WHERE id_Producto = " + id + " OR nombre = '" + nombre + "'");
-            pps.setInt(1, cantidadDisminuida);
-            JOptionPane.showMessageDialog(null, "Faltante Actualizado");
+            try (pps) {
+                pps.setInt(1, cantidadDisminuida);
+                System.out.println("Faltante Actualizado");
+            }
         } catch (SQLException ex) {
             ex.printStackTrace(System.out);
         } finally {
             if (this.conexionTransaccional == null) {
                 Conexion.close(con);
-                Conexion.close(pps);
             }
         }
     }
@@ -256,10 +273,9 @@ public class FaltantesDAOJDBC implements FaltantesDAO {
         } finally {
             if (this.conexionTransaccional == null) {
                 Conexion.close(con);
-                Conexion.close(pps);
-                Conexion.close(rs);
             }
-
+            Conexion.close(pps);
+            Conexion.close(rs);
         }
 
         return marca;
@@ -284,10 +300,9 @@ public class FaltantesDAOJDBC implements FaltantesDAO {
         } finally {
             if (this.conexionTransaccional == null) {
                 Conexion.close(con);
-                Conexion.close(pps);
-                Conexion.close(rs);
             }
-
+            Conexion.close(pps);
+            Conexion.close(rs);
         }
 
         return modelo;
@@ -312,49 +327,111 @@ public class FaltantesDAOJDBC implements FaltantesDAO {
         } finally {
             if (this.conexionTransaccional == null) {
                 Conexion.close(con);
-                Conexion.close(pps);
-                Conexion.close(rs);
             }
-
+            Conexion.close(pps);
+            Conexion.close(rs);
         }
 
         return color;
     }
 
     @Override
-    public void venderP2(int id, Producto prod, int cantidad) {
-        /*
-        Agregar o actualiza la lista de faltantes
-         */
+    public void vender(Producto producto, int cantidad) {
 
-        Connection con = null;
-        PreparedStatement pps = null;
-        ResultSet rs = null;
-
-        double totalVenta = cantidad * prod.getPrecioCompra();
+        final PreparedStatement pps;
+        final ResultSet rs;
 
         try {
-            //Comprobar si en el registro de Faltantes ya está el producto
-            con = conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
-            pps = con.prepareStatement("SELECT * FROM faltantes WHERE id_producto = '" + id + "'");
-            rs = pps.executeQuery();
-            if (rs.next()) {
-                acumularCantidad(id, prod.getNombreProducto(), cantidad);
-            } else {
-                prod.setCantidad(cantidad);
-                nuevoFaltante(prod);
+            pps = this.conexionTransaccional.prepareStatement("SELECT * FROM faltantes WHERE nombre = '" + producto.getNombreProducto() + "'");
+            try (pps) {
+                rs = pps.executeQuery();
+                try (rs) {
+                    if (rs.next()) {
+                        updateCantidad(0, producto.getNombreProducto(), cantidad);
+                    } else {
+                        producto.setCantidad(cantidad);
+                        nuevoFaltante(producto);
+                    }
+                }
+
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace(System.out);
+        }
+    }
+
+    @Override
+    public List<Producto> listar() {
+        listaFaltantes = new ArrayList<>();
+
+        final Connection con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
+        final PreparedStatement pps;
+        final ResultSet rs;
+        try (con) {
+            pps = con.prepareStatement("SELECT nombre, provedor, modelo, cantidad, precio_compra FROM faltantes");
+            try (pps) {
+                rs = pps.executeQuery();
+                try (rs) {
+                    while (rs.next()) {
+                        listaFaltantes.add(new Producto(
+                                rs.getString("nombre"),
+                                rs.getString("provedor"),
+                                rs.getString("modelo"),
+                                rs.getInt("cantidad"),
+                                rs.getDouble("precio_compra"),
+                                rs.getInt("cantidad") * rs.getDouble("precio_compra")
+                        ));
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace(System.out);
+        }
+
+        return listaFaltantes;
+    }
+
+    @Override
+    public void surtir(Producto producto) {
+        final Connection con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
+        final PreparedStatement pps;
+        try {
+            pps = con.prepareStatement("UPDATE faltantes SET CANTIDAD = ? WHERE nombre ='" + producto.getNombreProducto() + "'");
+            try (pps) {
+                pps.setInt(1, producto.getCantidad());
+                pps.executeUpdate();
             }
 
         } catch (SQLException ex) {
-
+            ex.printStackTrace();
         } finally {
             if (this.conexionTransaccional == null) {
                 Conexion.close(con);
-                Conexion.close(pps);
-                Conexion.close(rs);
             }
-
         }
+    }
+
+    @Override
+    public String getFaltanteTotal() {
+        Connection con = this.conexionTransaccional != null ? this.conexionTransaccional : Conexion.getConnection();
+        String reinversionTotal = null;
+        final PreparedStatement pps;
+        final ResultSet rs;
+        try {
+            pps = con.prepareStatement("SELECT SUM(precio_total) FROM faltantes");
+            try (pps) {
+                rs = pps.executeQuery();
+                try (rs) {
+                    if (rs.next()) {
+                        reinversionTotal = rs.getString(1);
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace(System.out);
+        }
+
+        return reinversionTotal;
     }
 
 }

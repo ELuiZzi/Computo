@@ -2,28 +2,23 @@ package com.lumtec.computo.Paneles;
 
 import com.lumtec.computo.Colors;
 import com.lumtec.computo.HerramientasTabla;
-import com.lumtec.computo.Search;
 import com.lumtec.computo.Shortcuts;
-import ConexionBD.Conexion;
+import com.lumtec.computo.Inventario.InventarioDAOJDBC;
 import java.awt.event.KeyEvent;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import javax.swing.RowFilter;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 public class InventarioPanel extends javax.swing.JPanel {
 
     DefaultTableModel model;
     DefaultTableCellRenderer alinear;
+    TableRowSorter<TableModel> tableRowSorter;
     HerramientasTabla conf = new HerramientasTabla();
-    Connection con;
-    PreparedStatement pps;
-    ResultSet rs;
-    String[] datos;
-    Search sear;
+    InventarioDAOJDBC inventarioDAO;
 
     Shortcuts sc = new Shortcuts();
 
@@ -114,13 +109,15 @@ public class InventarioPanel extends javax.swing.JPanel {
 
     private void tablaInventarioKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tablaInventarioKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_DELETE) {
-            conf.eliminarId("inventario", tablaInventario, con, pps);
+            conf.eliminarId("inventario", tablaInventario);
             rellenarTabla();
         } else if (evt.getKeyCode() == KeyEvent.VK_E) {
             sc.editarProducto(tablaInventario);
         } else if (evt.getKeyCode() == KeyEvent.VK_V) {
             sc.sell(tablaInventario);
         }
+
+
     }//GEN-LAST:event_tablaInventarioKeyPressed
 
     private void barraBusquedaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_barraBusquedaMouseClicked
@@ -146,33 +143,15 @@ public class InventarioPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_barraBusquedaFocusLost
 
     private void barraBusquedaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_barraBusquedaKeyPressed
-        //Caputarmos el carácter que acabamos de presionar, el cuál se buscará en la tabla
-        char c = evt.getKeyChar();
 
-        //En caso de que se presione la tecla 'retroceso' hace una desbusqueda.
-        if (evt.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-            String texto = barraBusqueda.getText();
-            int length = texto.length();
-            char A = '\0';
-            char B = '\0';
-            try {
-                A = texto.charAt(length - 3);
-                B = texto.charAt(length - 2);
-            } catch (StringIndexOutOfBoundsException ex) {
-                try {
-                    B = texto.charAt(length - 2);
-                } catch (StringIndexOutOfBoundsException exs) {
-                }
-            }
-            System.out.println("A = " + A);
-            System.out.println("B = " + B);
-            sear.desBusque(A, B);
-        } //Método para buscar el carácter presionado
-        else {
-            sear.busque(c);
-        }
-
-        fillCountRowLabel(); //Nos indica el número de resulstados encontrados
+        String textoBusqueda = barraBusqueda.getText().toLowerCase();
+        TableRowSorter<TableModel> rowSorter = new TableRowSorter<>(tablaInventario.getModel());
+        tablaInventario.setRowSorter(rowSorter);
+        rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + textoBusqueda, 0));
+        
+        
+        
+        fillCountRowLabel();
     }//GEN-LAST:event_barraBusquedaKeyPressed
 
     private void alinearColumnas() {
@@ -211,42 +190,34 @@ public class InventarioPanel extends javax.swing.JPanel {
         model = new DefaultTableModel();
         alinear = new DefaultTableCellRenderer();
         alinear.setHorizontalAlignment(SwingConstants.CENTER);
-     
+
         model.addColumn("NOMBRE");
         model.addColumn("MARCA");
         model.addColumn("MODELO");
         model.addColumn("CANTIDAD");
         model.addColumn("PRECIO");
-        datos = new String[5];
+
         tablaInventario.setModel(model);
+        tableRowSorter = new TableRowSorter<>(model);
+        tablaInventario.setRowSorter(tableRowSorter);
 
         /**
          * Alinear las columnas
          */
         alinearColumnas();
 
-        try {
+        var productos = this.inventarioDAO.listar();
 
-            con = Conexion.getConnection();
-            pps = con.prepareStatement("SELECT NOMBRE, MARCA, MODELO, CANTIDAD, PRECIO_VENTA FROM inventario");
-            rs = pps.executeQuery();
-            while (rs.next()) {
-              
-                datos[0] = rs.getString("NOMBRE");
-                datos[1] = rs.getString("MARCA");
-                datos[2] = rs.getString("MODELO");
-                datos[3] = rs.getString("CANTIDAD");
-                datos[4] = rs.getString("PRECIO_VENTA");
-                model.addRow(datos);
-            }
+        productos.forEach(producto -> model.addRow(
+                new Object[]{
+                    producto.getNombreProducto(),
+                    producto.getMarca(),
+                    producto.getModelo(),
+                    producto.getCantidad(),
+                    producto.getPrecioVenta()
+                }
+        ));
 
-        } catch (SQLException ex) {
-            ex.printStackTrace(System.out);
-        } finally {
-            Conexion.close(con);
-            Conexion.close(pps);
-            Conexion.close(rs);
-        }
     }
 
     /*
@@ -271,10 +242,12 @@ public class InventarioPanel extends javax.swing.JPanel {
         tablaInventario.setForeground(Colors.text);
         tablaInventario.setSelectionBackground(Colors.textBoxActivated);
 
+        inventarioDAO = new InventarioDAOJDBC();
+
         //Primero de inicia la tabla, ya que en base a los valores de definen algunos métodos.
         rellenarTabla();
         //Selecciona el número de filas que tiene la tabla de inventario.
         fillCountRowLabel();
-        sear = new Search(tablaInventario);
     }
+
 }

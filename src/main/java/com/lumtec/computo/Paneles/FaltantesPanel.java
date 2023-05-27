@@ -4,39 +4,29 @@ import com.lumtec.computo.Colors;
 import com.lumtec.computo.Faltantes.FaltantesDAO;
 import com.lumtec.computo.Faltantes.FaltantesDAOJDBC;
 import com.lumtec.computo.HerramientasTabla;
-import com.lumtec.computo.Inventario.InventarioDAO;
-import com.lumtec.computo.Inventario.InventarioDAOJDBC;
-import ConexionBD.Conexion;
 import com.lumtec.computo.Go;
 import com.lumtec.computo.Home.Home;
+import com.lumtec.computo.Producto;
 import com.lumtec.computo.Shortcuts;
+import com.lumtec.computo.model.ConexionMultiple;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 public class FaltantesPanel extends javax.swing.JPanel {
 
     FaltantesDAO fal = new FaltantesDAOJDBC();
-    InventarioDAO inve = new InventarioDAOJDBC();
     HerramientasTabla conf;
-    static List lista = new ArrayList();
     DefaultTableModel model;
     DefaultTableCellRenderer Alinear = new DefaultTableCellRenderer();
-    Connection con;
-    PreparedStatement pps;
-    ResultSet rs;
-    String[] datos;
+    private TableRowSorter<TableModel> tableRowSorter;
+    Shortcuts sc = new Shortcuts();
 
     Font Arial = new java.awt.Font("Arial", 0, 12);
 
@@ -139,24 +129,23 @@ public class FaltantesPanel extends javax.swing.JPanel {
             conf = new HerramientasTabla();
             int del = JOptionPane.showConfirmDialog(null, "¿Seguro que deseas eliminar el Producto?", "Elimnar Producto", JOptionPane.YES_NO_OPTION);
             if (del == 0) {
-                con = Conexion.getConnection();
-                conf.eliminarId("faltantes", tablaFaltantes, con, pps);
+
+                conf.eliminarId("faltantes", tablaFaltantes);
                 rellenarTabla();
                 vaciarTabla(tablaProvedores);
                 rellenarTablaProvedores();
-                Conexion.close(con);
 
             }
         } else if (evt.getKeyCode() == KeyEvent.VK_S) {
             //Pregunta si queremos eliminar el producto, y ademas ocupa el nombre del producto según la columa de nombre y la fila seleccionada
-            int add = JOptionPane.showConfirmDialog(null, "¿Quieres surtir " + tablaFaltantes.getValueAt(tablaFaltantes.getSelectedRow(), 1).toString() + "?", "Surtir Producto", JOptionPane.YES_NO_OPTION
+            int add = JOptionPane.showConfirmDialog(null, "¿Quieres surtir " + tablaFaltantes.getValueAt(tablaFaltantes.getSelectedRow(), 0).toString() + "?", "Surtir Producto", JOptionPane.YES_NO_OPTION
             );
             if (add == 0) {
                 surtir();
             }
 
         } else if (evt.getKeyCode() == KeyEvent.VK_E) {
-            Shortcuts.editarFaltante(tablaFaltantes);
+            sc.editarFaltante(tablaFaltantes);
         }
     }//GEN-LAST:event_tablaFaltantesKeyPressed
 
@@ -178,7 +167,6 @@ public class FaltantesPanel extends javax.swing.JPanel {
 
     private void rellenarTabla() {
 
-        datos = new String[6];
         Alinear.setHorizontalAlignment(SwingConstants.CENTER);
 
         model = new DefaultTableModel();
@@ -190,7 +178,9 @@ public class FaltantesPanel extends javax.swing.JPanel {
         model.addColumn("Precio Compra");
         model.addColumn("Total");
 
+        tableRowSorter = new TableRowSorter<>(model);
         tablaFaltantes.setModel(model);
+        tablaFaltantes.setRowSorter(tableRowSorter);
         tablaFaltantes.setFont(Arial);
 
         tablaFaltantes.getColumnModel().getColumn(0).setMaxWidth(250);
@@ -214,33 +204,25 @@ public class FaltantesPanel extends javax.swing.JPanel {
         tablaFaltantes.getColumnModel().getColumn(5).setCellRenderer(Alinear);
         tablaFaltantes.setRowHeight(17);
 
-        try {
-            con = Conexion.getConnection();
-            pps = con.prepareStatement("SELECT * FROM faltantes");
-            rs = pps.executeQuery();
-            while (rs.next()) {
+        var faltantes = this.fal.listar();
 
-                datos[0] = rs.getString("nombre");
-                datos[1] = rs.getString("provedor");
-                datos[2] = rs.getString("modelo");
-                datos[3] = rs.getString("cantidad");
-                datos[4] = rs.getString("precio_compra");
-                datos[5] = rs.getString("precio_total");
-
-                model.addRow(datos);
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace(System.out);
-        } finally {
-            Conexion.close(pps);
-            Conexion.close(rs);
-        }
+        faltantes.forEach(producto -> model.addRow(
+                new Object[]{
+                    producto.getNombreProducto(),
+                    producto.getProvedor(),
+                    producto.getModelo(),
+                    producto.getCantidad(),
+                    producto.getPrecioCompra(),
+                    producto.getTotalCompra()
+                }
+        ));
 
     }
 
     private void rellenarTablaProvedores() {
+
         model = new DefaultTableModel();
-        datos = new String[2];
+
         model.addColumn("Provedor");
         model.addColumn("Costo");
         Alinear.setHorizontalAlignment(SwingConstants.CENTER);
@@ -248,125 +230,34 @@ public class FaltantesPanel extends javax.swing.JPanel {
         tablaFaltantes.setFont(new java.awt.Font("Arial", 0, 12));
         tablaProvedores.getColumnModel().getColumn(0).setCellRenderer(Alinear);
         tablaProvedores.getColumnModel().getColumn(1).setCellRenderer(Alinear);
-
-        try {
-            //Conexion abierta en método porque es temporal
-            con = Conexion.getConnection();
-            pps = con.prepareStatement("SELECT * FROM faltantes");
-            rs = pps.executeQuery();
-
-            while (rs.next()) {
-                String provedor = rs.getString("provedor");
-
-                if (provedor == null) {
-
-                } else {
-                    lista.add(provedor);
-                }
-
-            }
-            lista = (List) lista.stream().distinct().collect(Collectors.toList());
-
-            for (int i = 0; i < lista.size(); i++) {
-                try {
-                    String prove = lista.get(i).toString();
-                    datos[0] = prove;
-                    dineroTotal(datos, con, pps, rs);
-                    model.addRow(datos);
-
-                } catch (java.lang.NullPointerException ex) {
-
-                }
-            }
-
-        } catch (SQLException ex) {
-
-        } finally {
-            Conexion.close(pps);
-            Conexion.close(rs);
-        }
+        
 
     }
 
-    private void dineroTotal(String[] datos, Connection con, PreparedStatement pps, ResultSet rs) {
-        float dinero_total = 0;
-
-        try {
-            pps = con.prepareStatement("SELECT precio_total FROM faltantes WHERE provedor = '" + datos[0] + "'");
-            rs = pps.executeQuery();
-            while (rs.next()) {
-                dinero_total = (float) (dinero_total + Math.ceil(rs.getFloat("precio_total")));
-            }
-            datos[1] = Float.toString(dinero_total);
-
-            System.out.println(datos[0] + " " + dinero_total);
-        } catch (SQLException ex) {
-            ex.printStackTrace(System.out);
-        }
-
-        try {
-            dinero_total = 0;
-            pps = con.prepareStatement("SELECT precio_total FROM faltantes");
-            rs = pps.executeQuery();
-            while (rs.next()) {
-                dinero_total = (float) (dinero_total + Math.ceil(rs.getFloat("precio_total")));
-            }
-
-        } catch (SQLException ex) {
-            ex.printStackTrace(System.out);
-        }
-        dineroTotal_box.setText("$ " + dinero_total);
-    }
-
-    /*
-    Método creado para agregar los nuevos productos al Inventario y a su vez restarlos de Faltantes
-     */
     private void surtir() {
-        /*
-         Lo Primero es agregar la cantidad al Inventario
-         */
 
-        Connection cone = Conexion.getConnection();
-
-        inve = new InventarioDAOJDBC(cone);
-        fal = new FaltantesDAOJDBC(cone);
-
-        //Seleccionamos el ID que vamos a manejar, debe de ser el mismo en la tabla de Inventario como en la de Faltantes.
-        //El ID se saca de la primer columna de la tabla y de la fila que esté seleccionada
-        String nombre = tablaFaltantes.getValueAt(tablaFaltantes.getSelectedRow(), 0).toString();
-        String marca = fal.getMarca(0, nombre);
-        String modelo = fal.getModelo(0, nombre);
-        String color = fal.getColor(0, nombre);
-        double precioCompra = Double.parseDouble(tablaFaltantes.getValueAt(tablaFaltantes.getSelectedRow(), 4).toString());
+        ConexionMultiple coonexionMultiple = new ConexionMultiple();
 
         //La cantidad nueva se encerrar en un try-catch, en caso de que se escriba un dato erroeno, o se cancele la acción
         int cantidadASurtir = 0;
 
         try {
             cantidadASurtir = Integer.parseInt(JOptionPane.showInputDialog("Cantidad"));
+
         } catch (NumberFormatException ex) {
             System.out.println("Cancelado/Dato no válido como cantidad");
         }
 
-        //La cantidad que se va a agregar se saca sumando la cantidad actual mas la nueva cantidad
-        int cantidadTotalInve = inve.cantidadActual(0, nombre) + cantidadASurtir;
+        Producto producto = new Producto(tablaFaltantes.getValueAt(tablaFaltantes.getSelectedRow(), 0).toString(),
+                tablaFaltantes.getValueAt(tablaFaltantes.getSelectedRow(), 2).toString(),
+                Double.parseDouble(tablaFaltantes.getValueAt(tablaFaltantes.getSelectedRow(), 4).toString()));
 
-        //Haremos un try-catch para iniziar los métodos con la misma conexión,en caso de que haya un error, haremos Rollback. 
-        //Actualizamos Inventario, sumando los nuevos productos
-        inve.surtir(0, nombre, cantidadTotalInve, precioCompra, marca, modelo, color);
-
-        //Actualizamos Faltantes, restando los nuevos productos
-        fal.disminuirCantidad(0, nombre, cantidadASurtir);
-        //Una vez actualizadas las BD, y aprovechando la conexion, verificaremos si la cantidad actual del producto en Faltantes es menor a 0, en caso de que lo sea, se tendrá que eliminar
-        if (fal.getCantidad(0, nombre) <= 0) {
-            fal.eliminarFaltante(0, nombre);
-        }
+        coonexionMultiple.surtir(producto, cantidadASurtir);
 
         //Finalmente rellenamos las tablas con los nuevos cambios
         rellenarTabla();
         vaciarTabla(tablaProvedores);
         rellenarTablaProvedores();
-        Conexion.close(cone);
 
     }
 
@@ -375,11 +266,12 @@ public class FaltantesPanel extends javax.swing.JPanel {
     }
 
     private void rellenarTablas() {
+        
+        FaltantesDAO faltantesDAO = new FaltantesDAOJDBC();
 
-        con = Conexion.getConnection();
         rellenarTabla();
         rellenarTablaProvedores();
-        Conexion.close(con);
+        dineroTotal_box.setText(faltantesDAO.getFaltanteTotal());
 
     }
 

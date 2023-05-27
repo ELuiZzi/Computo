@@ -1,26 +1,26 @@
 package com.lumtec.computo.Paneles;
 
+import ConexionBD.Conexion;
 import com.lumtec.computo.ClipBoar;
 import com.lumtec.computo.Colors;
 import com.lumtec.computo.Inventario.InventarioDAO;
 import com.lumtec.computo.Inventario.InventarioDAOJDBC;
 import com.lumtec.computo.Tiempo;
-import ConexionBD.Conexion;
-import java.awt.event.KeyEvent;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import com.lumtec.computo.Vender.VentaDAO;
+import com.lumtec.computo.Vender.VentaDAOJDBC;
+import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.table.DefaultTableModel;
 
 public class FinanzasPanel extends javax.swing.JPanel {
 
-    InventarioDAO inv = new InventarioDAOJDBC(); //Esta variable carga el metodo de inversión
-    DefaultTableModel modelVent, modelVentMens, model2;
+    InventarioDAO inv = new InventarioDAOJDBC(); //Esta variable carga el metodo de inversiÃ³n
+    DefaultTableModel modelVentas, modelVentaMensual;
     DefaultComboBoxModel modelBox;
+    VentaDAO ventasDAO;
     String añoActual = Tiempo.getAño();
     String mesActual = Tiempo.getMes();
+    List<String> listadoFinanzas;
 
     public FinanzasPanel() {
         initComponents();
@@ -36,10 +36,6 @@ public class FinanzasPanel extends javax.swing.JPanel {
         Panel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tablaVentasMensual = new javax.swing.JTable();
-        totalGastado_Label = new javax.swing.JLabel();
-        totalGastadoStatic = new javax.swing.JLabel();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        tablaGastosMensual = new javax.swing.JTable();
         Banner = new javax.swing.JPanel();
         mesComboBox = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
@@ -98,36 +94,7 @@ public class FinanzasPanel extends javax.swing.JPanel {
         ));
         jScrollPane2.setViewportView(tablaVentasMensual);
 
-        Panel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 60, 470, 280));
-
-        totalGastado_Label.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        totalGastado_Label.setForeground(new java.awt.Color(255, 255, 255));
-        totalGastado_Label.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        totalGastado_Label.setText("----------");
-        Panel2.add(totalGastado_Label, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 343, 120, 30));
-
-        totalGastadoStatic.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        totalGastadoStatic.setForeground(new java.awt.Color(255, 255, 255));
-        totalGastadoStatic.setText("Total Gastado:");
-        Panel2.add(totalGastadoStatic, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 343, 120, 30));
-
-        jScrollPane3.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
-
-        tablaGastosMensual.setForeground(new java.awt.Color(255, 255, 255));
-        tablaGastosMensual.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {},
-                {},
-                {},
-                {}
-            },
-            new String [] {
-
-            }
-        ));
-        jScrollPane3.setViewportView(tablaGastosMensual);
-
-        Panel2.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 60, 320, 280));
+        Panel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(25, 60, 810, 300));
 
         Banner.setBackground(new java.awt.Color(235, 235, 235));
         Banner.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -203,16 +170,6 @@ public class FinanzasPanel extends javax.swing.JPanel {
 
         año_ComboBox.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         año_ComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "2023", "2022", "2021" }));
-        año_ComboBox.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                año_ComboBoxItemStateChanged(evt);
-            }
-        });
-        año_ComboBox.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                año_ComboBoxFocusGained(evt);
-            }
-        });
         Banner.add(año_ComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(106, 7, 70, 30));
 
         Panel2.add(Banner, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 860, 45));
@@ -309,10 +266,13 @@ public class FinanzasPanel extends javax.swing.JPanel {
     private void seleccionarBotonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_seleccionarBotonMouseClicked
         if (seleccionarBoton.isEnabled()) {
             String mes = (String) mesComboBox.getSelectedItem();
-            tablaEtiquetas(mes, (String) año_ComboBox.getSelectedItem());
+            String año = (String) año_ComboBox.getSelectedItem();
+
+            rellenarTablaVentasMensual(mes, año);
+            completarEtiquetas(mes, año);
 
             seleccionarBoton.requestFocus();
-            seleccionarBoton.setEnabled(false);
+            //seleccionarBoton.setEnabled(false);
         }
     }//GEN-LAST:event_seleccionarBotonMouseClicked
 
@@ -327,7 +287,7 @@ public class FinanzasPanel extends javax.swing.JPanel {
 
     private void copyButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_copyButtonMouseClicked
         String finanzas = "Ventas del mes: " + Tiempo.getMes() + " " + Tiempo.getAño() + '\n' + '\n'
-                + "Inversión: " + inverLabel.getText() + '\n'
+                + "InversiÃ³n: " + inverLabel.getText() + '\n'
                 + "Max. Ventas: " + ventasLabel.getText() + '\n'
                 + "Ganancias Est: " + gananLabel.getText();
 
@@ -350,14 +310,13 @@ public class FinanzasPanel extends javax.swing.JPanel {
         copyButton.setBackground(Colors.buttonPressed);
     }//GEN-LAST:event_copyButtonMouseReleased
 
-    private void año_ComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_año_ComboBoxItemStateChanged
+    private void año_ComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {
         resetTabla();
-    }//GEN-LAST:event_año_ComboBoxItemStateChanged
+    }
 
-    private void año_ComboBoxFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_año_ComboBoxFocusGained
+    private void año_ComboBoxFocusGained(java.awt.event.FocusEvent evt) {
 
-
-    }//GEN-LAST:event_año_ComboBoxFocusGained
+    }
 
     private void mesComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_mesComboBoxItemStateChanged
         resetTabla();
@@ -383,123 +342,69 @@ public class FinanzasPanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JComboBox<String> mesComboBox;
     private javax.swing.JLabel reinversionLabel;
     private javax.swing.JPanel seleccionarBoton;
-    private javax.swing.JTable tablaGastosMensual;
     private javax.swing.JTable tablaVentas;
     private javax.swing.JTable tablaVentasMensual;
-    private javax.swing.JLabel totalGastadoStatic;
-    private javax.swing.JLabel totalGastado_Label;
     private javax.swing.JLabel totalVendidoStatic;
     private javax.swing.JLabel totalVendido_Label;
     private javax.swing.JLabel ventasLabel;
     // End of variables declaration//GEN-END:variables
 
-    private void completarEtiquetas(String mes, String año) {
-        Connection con = null;
-        PreparedStatement pps = null;
-        ResultSet rs = null;
+    private void rellenarTablaVentas() {
+        modelVentas = new DefaultTableModel();
 
-        float totalVendido = 0;
-        float ganancia = 0;
-        float reinversion = 0;
-        try {
-            con = Conexion.getConnection();
-            pps = con.prepareStatement("SELECT * FROM ventas WHERE mesVenta = '" + mes + "' AND añoVenta='" + año + "'");
-            rs = pps.executeQuery();
-            while (rs.next()) {
-                totalVendido = totalVendido + rs.getFloat("precio_venta");
-                ganancia = ganancia + rs.getFloat("ganancia");
-                reinversion = reinversion + rs.getFloat("reinversion");
-            }
-            totalVendido_Label.setText("$" + Float.toString(totalVendido));
-            gananciaLabel.setText("$" + Math.round(ganancia));
-            reinversionLabel.setText("$" + Math.round(reinversion));
-        } catch (SQLException ex) {
-            ex.printStackTrace(System.out);
-        } finally {
-            Conexion.close(con);
-            Conexion.close(pps);
-            Conexion.close(rs);
-        }
-    }
+        ventasDAO = new VentaDAOJDBC();
 
-    private void rellenarTablas() {
-        modelVent = new DefaultTableModel();
-        modelVentMens = new DefaultTableModel();
-        model2 = new DefaultTableModel();
+        modelVentas.addColumn("Producto");
+        modelVentas.addColumn("Modelo");
+        modelVentas.addColumn("Fecha de Venta");
+        modelVentas.addColumn("Venta");
 
-        modelVent.addColumn("Producto");
-        modelVent.addColumn("Modelo");
-        modelVent.addColumn("Fecha de Venta");
-        modelVent.addColumn("Venta");
+        tablaVentas.setModel(modelVentas);
 
-        modelVentMens.addColumn("Producto");
-        modelVentMens.addColumn("Fecha de Venta");
-        modelVentMens.addColumn("Venta");
-        modelVentMens.addColumn("Reinversión");
-        modelVentMens.addColumn("Ganancia");
+        var listaVentas = ventasDAO.listarVentas();
 
-        model2.addColumn("Descripción");
-        model2.addColumn("Valor");
-        model2.addColumn("Fecha");
-
-        tablaVentas.setModel(modelVent);
-        tablaVentasMensual.setModel(modelVentMens);
-        tablaGastosMensual.setModel(model2);
-
-        String[] ventas = new String[4];
-
-        Connection con;
-        PreparedStatement pps;
-        try {
-            con = Conexion.getConnection();
-            pps = con.prepareStatement("SELECT * FROM ventas");
-            ResultSet rs = pps.executeQuery();
-            while (rs.next()) {
-                ventas[0] = rs.getString("nombre_producto");
-                ventas[1] = rs.getString("modelo");
-                ventas[2] = rs.getString("fecha");
-                ventas[3] = rs.getString("precio_venta");
-
-                modelVent.addRow(ventas);
-            }
-
-        } catch (SQLException ex) {
-            ex.printStackTrace(System.out);
-        }
+        listaVentas.forEach(venta -> modelVentas.addRow(
+                new Object[]{
+                    venta.getNombre(),
+                    venta.getModelo(),
+                    venta.getFecha(),
+                    venta.getTotalVenta()
+                }
+        )
+        );
 
     }
 
     private void rellenarTablaVentasMensual(String mes, String año) {
+        modelVentaMensual = new DefaultTableModel();
 
-        String[] ventas = new String[5];
+        ventasDAO = new VentaDAOJDBC();
 
-        Connection con;
-        PreparedStatement pps;
-        ResultSet rs;
-        try {
-            con = Conexion.getConnection();
-            pps = con.prepareStatement("SELECT * FROM ventas WHERE mesVenta = '" + mes + "' AND añoVenta ='" + año + "'");
-            rs = pps.executeQuery();
-            while (rs.next()) {
-                ventas[0] = rs.getString("nombre_producto");
-                ventas[1] = rs.getString("fecha");
-                ventas[2] = rs.getString("precio_venta");
-                ventas[3] = rs.getString("reinversion");
-                ventas[4] = rs.getString("ganancia");
+        modelVentaMensual.addColumn("Producto");
+        modelVentaMensual.addColumn("Fecha de Venta");
+        modelVentaMensual.addColumn("Venta");
+        modelVentaMensual.addColumn("Reinversión");
+        modelVentaMensual.addColumn("Ganancia");
 
-                modelVentMens.addRow(ventas);
+        tablaVentasMensual.setModel(modelVentaMensual);
 
-            }
+        var listaVentas = ventasDAO.listarVentasMensuales(mes, año);
 
-        } catch (SQLException ex) {
-            ex.printStackTrace(System.out);
-        }
+        listaVentas.forEach(venta -> modelVentaMensual.addRow(
+                new Object[]{
+                    venta.getNombre(),
+                    venta.getFecha(),
+                    venta.getTotalVenta(),
+                    venta.getReinverson(),
+                    venta.getGanancia()
+                }
+        )
+        );
 
     }
 
@@ -522,19 +427,14 @@ public class FinanzasPanel extends javax.swing.JPanel {
 
     private void finanzasMesActual() {
         rellenarTablaVentasMensual(mesActual, añoActual);
-        completarEtiquetas(mesActual, añoActual);
+        //completarEtiquetas(mesActual, añoActual);
         mesComboBox.setSelectedItem(mesActual);
-    }
-
-    void tablaEtiquetas(String mes, String año) {
-        rellenarTablaVentasMensual(mes, año);
-        completarEtiquetas(mes, año);
     }
 
     private void resetTabla() {
         try {
-            while (0 <= modelVentMens.getRowCount()) {
-                modelVentMens.removeRow(0);
+            while (0 <= modelVentaMensual.getRowCount()) {
+                modelVentaMensual.removeRow(0);
             }
         } catch (java.lang.ArrayIndexOutOfBoundsException ex) {
 
@@ -556,23 +456,20 @@ public class FinanzasPanel extends javax.swing.JPanel {
 
         tablaVentas.setBackground(Colors.textBox);
         tablaVentasMensual.setBackground(Colors.textBox);
-        tablaGastosMensual.setBackground(Colors.textBox);
 
         copyButton.setBackground(Colors.button);
         jScrollPane1.setBackground(Colors.panel);
         jScrollPane1.getViewport().setBackground(Colors.panel);
         jScrollPane2.setBackground(Colors.panel);
         jScrollPane2.getViewport().setBackground(Colors.panel);
-        jScrollPane3.setBackground(Colors.panel);
-        jScrollPane3.getViewport().setBackground(Colors.panel);
         seleccionarBoton.setBackground(Colors.button);
 
         tablaVentasMensual.setSelectionBackground(Colors.textBoxActivated);
-        tablaGastosMensual.setSelectionBackground(Colors.textBoxActivated);
         tablaVentas.setSelectionBackground(Colors.textBoxActivated);
 
-        //Tablas y Métodos
-        rellenarTablas();
+        //Tablas y MÃ©todos
+        rellenarTablaVentas();
+
         modelMesesComboBox();
         finanzasMesActual();
 
@@ -585,6 +482,20 @@ public class FinanzasPanel extends javax.swing.JPanel {
         inverLabel.setText("$ " + inver);
         ventasLabel.setText("$ " + maxVentas);
         gananLabel.setText("$ " + ganan);
+
+        rellenarTablaVentasMensual(Tiempo.getMes(), Tiempo.getAño());
+        completarEtiquetas(Tiempo.getMes(), Tiempo.getAño());
+    }
+
+    private void completarEtiquetas(String mes, String año) {
+
+        VentaDAO ventasDAO = new VentaDAOJDBC();
+
+        this.listadoFinanzas = ventasDAO.listadoFinanzas(mes, año);
+
+        totalVendido_Label.setText("$ " + this.listadoFinanzas.get(0));
+        gananciaLabel.setText("$ " + this.listadoFinanzas.get(1));
+        reinversionLabel.setText("$ " + this.listadoFinanzas.get(2));
     }
 
 }

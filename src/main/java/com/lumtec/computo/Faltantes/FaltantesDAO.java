@@ -1,6 +1,7 @@
 package com.lumtec.computo.Faltantes;
 
 import com.lumtec.computo.Producto;
+import java.util.List;
 
 public interface FaltantesDAO {
 
@@ -16,7 +17,7 @@ public interface FaltantesDAO {
 
     public void eliminarFaltante(int id, String nombre);
 
-    public void acumularCantidad(int id, String nombre, int cantidad);
+    public void updateCantidad(int id, String nombre, int cantidad);
 
     public void disminuirCantidad(int id, String nombre, int cantidad);
 
@@ -24,7 +25,7 @@ public interface FaltantesDAO {
     Devuelve la cantidad de un producto en la tabla faltantes
     Ej. A la hora de surtir, cuando queremos eliminar de faltantes los productos recién surtidos
      */
-    public int getCantidad(int id, String nombre);
+    public int getCantidadActual(int id, String nombre);
 
     public String getMarca(int id, String nombre);
 
@@ -32,6 +33,13 @@ public interface FaltantesDAO {
 
     public String getColor(int id, String nombre);
 
-    public void venderP2(int id, Producto prod, int cantidad);
+
+    public List<Producto> listar();
+    
+    public void surtir(Producto producto);
+
+    public void vender(Producto producto, int cantidadFaltantes);
+    
+    public String getFaltanteTotal();
 
 }

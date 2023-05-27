@@ -8,9 +8,7 @@ import com.lumtec.computo.Go;
 import ConexionBD.Conexion;
 import com.lumtec.computo.Paneles.AgregarProductoPanel;
 import com.lumtec.computo.Paneles.EditarPanel;
-import com.lumtec.computo.Paneles.FaltantesPanel;
 import com.lumtec.computo.Paneles.FinanzasPanel;
-import com.lumtec.computo.Paneles.InventarioPanel;
 import com.lumtec.computo.Paneles.NuevoFaltantePanel;
 import com.lumtec.computo.Paneles.VenderPanel;
 import java.awt.Component;
@@ -18,7 +16,6 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.Connection;
 import javax.swing.JPanel;
 import org.netbeans.lib.awtextra.AbsoluteConstraints;
 import org.netbeans.lib.awtextra.AbsoluteLayout;
@@ -39,11 +36,6 @@ public class Home extends javax.swing.JFrame {
         //Creamos un producto para poder reiniciarlo, de esta forma nos aseguramos no conservar información del agun producto utilizado
         prod = new Producto();
         prod.reset();
-
-        //Accedemos a  la base de datos, para precargar
-        Connection con = null;
-        con = Conexion.getConnection();
-        Conexion.close(con);
 
         initComponents();
         initOwnComponents();
@@ -223,7 +215,7 @@ public class Home extends javax.swing.JFrame {
 
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel4.setText("V. 1.0.15");
+        jLabel4.setText("V. 1.1.0");
         Menu.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 412, 50, -1));
 
         background.add(Menu, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 210, 440));
@@ -459,6 +451,9 @@ public class Home extends javax.swing.JFrame {
         this.setIconImage(img.getLogo());
         this.setMaximumSize(new Dimension(860, 440));
 
+        //Verificar Conexion
+        Conexion.verificarConexion();
+
         //Colorización
         Barra.setBackground(Colors.banner1);
 
@@ -476,6 +471,5 @@ public class Home extends javax.swing.JFrame {
     public static final JPanel editarProdutcoPanel = new EditarPanel();
     public static final JPanel venderProdutcoPanel = new VenderPanel();
     public static final JPanel nuevoFaltantePanel = new NuevoFaltantePanel();
-    public static final JPanel finanzasPanel = new FinanzasPanel();
 
 }

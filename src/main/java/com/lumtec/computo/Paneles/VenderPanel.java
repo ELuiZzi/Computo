@@ -7,13 +7,9 @@ import com.lumtec.computo.Inventario.*;
 import com.lumtec.computo.Producto;
 import com.lumtec.computo.Vender.*;
 import com.lumtec.computo.Go;
-import ConexionBD.Conexion;
-import com.lumtec.computo.Faltantes.FaltantesDAO;
-import com.lumtec.computo.Faltantes.FaltantesDAOJDBC;
 import com.lumtec.computo.Home.Home;
+import com.lumtec.computo.model.ConexionMultiple;
 import java.awt.event.KeyEvent;
-import java.sql.Connection;
-import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -371,10 +367,9 @@ public class VenderPanel extends javax.swing.JPanel {
         double importe = prod.getPrecioVenta() * cantVend;
 
         //Llenar la tabla con las variables
-        variable[0] = Integer.toString(prod.getIdProducto());
-        variable[1] = Integer.toString(cantVend);
-        variable[2] = prod.getNombreProducto();
-        variable[3] = Double.toString(importe);
+        variable[0] = Integer.toString(cantVend);
+        variable[1] = prod.getNombreProducto();
+        variable[2] = Double.toString(importe);
 
         //Se añade la información a una lista estática
         Carrito.carrito.add(variable);
@@ -398,8 +393,6 @@ public class VenderPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_añadirButtonMouseExited
 
     private void venderButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_venderButtonMouseClicked
-        //Variables
-        Connection con = null;
 
         //Contar el número de productos listados
         int numProductosListados = listaTabla.getRowCount();
@@ -407,61 +400,13 @@ public class VenderPanel extends javax.swing.JPanel {
         //Crear un ciclo en donde se venda cada producto, fila por fila.
         for (int i = 0; i < numProductosListados; i++) {
 
-            //Variables temporales
-            //Se llaman a los valores de la tabla, que vienen en clase objeto.
-            String idTemp = listaTabla.getValueAt(i, 0).toString();
-            String nombreTemp = listaTabla.getValueAt(i, 2).toString();
-            int cantidadTemp = Integer.parseInt(listaTabla.getValueAt(i, 1).toString());
-            String totalTemp = listaTabla.getValueAt(i, 3).toString();
+            ConexionMultiple conexionMultiple = new ConexionMultiple();
+            conexionMultiple.vender(listaTabla.getValueAt(i, 1).toString(), Integer.parseInt(listaTabla.getValueAt(i, 0).toString()));
 
-            //Se convierten los Strings a tipo int
-            int id = Integer.parseInt(idTemp);
-
-            float total = Float.parseFloat(totalTemp);
-
-            try {
-                //Se crea la conexión
-                con = Conexion.getConnection();
-
-                if (con.getAutoCommit()) {
-                    con.setAutoCommit(false);
-                }
-
-                InventarioDAO inv = new InventarioDAOJDBC(con);
-                FaltantesDAO falt = new FaltantesDAOJDBC(con);
-                ven = new VentaDAOJDBC(con);
-
-                //Crea un objeto de la clase producto, con valores de la base de datos MySQL
-                if (con != null && !con.isClosed()) {
-                    prod = inv.select(id, nombreTemp);
-
-                    // Quita del inve los productos vendidos.
-                    inv.venderP1(cantidadTemp, prod);
-                    
-                    //Acumular la cantidad en faltantes
-                    falt.venderP2(id, prod, cantidad);
-
-                    // Agregar a la base de datos ventas, en donde se guardan las finanzas
-                    ven.vender(prod, cantidadTemp, total);
-                } else {
-                    System.out.println("Conexion cerrada");
-                }
-                con.commit();
-                JOptionPane.showMessageDialog(null, "Venta Exitosa");
-                Carrito.carrito.clear();
-                Go.to(Home.computoPanel);
-            } catch (SQLException ex) {
-                try {
-                    //En caso de que falle algo en la base de datos, no efectuar ningún cambio.
-                    con.rollback();
-                } catch (SQLException exl) {
-                    exl.printStackTrace();
-                }
-
-            } finally {
-                Conexion.close(con);
-
-            }
+            // Agregar a la base de datos ventas, en donde se guardan las finanzas
+            
+            Carrito.carrito.clear();
+            Go.to(Home.computoPanel);
 
         }
         //Una vez vendidos los productos, se debe de eliminar el carritp
@@ -580,7 +525,7 @@ public class VenderPanel extends javax.swing.JPanel {
         int var = listaTabla.getRowCount();
         float total = 0;
         for (int i = 0; i < var; i++) {
-            String precioPA = listaTabla.getValueAt(i, 3).toString();
+            String precioPA = listaTabla.getValueAt(i, 2).toString();
             float precioProductoActual = Float.parseFloat(precioPA);
             total = precioProductoActual + total;
         }
@@ -593,17 +538,15 @@ public class VenderPanel extends javax.swing.JPanel {
         modelo = new DefaultTableModel();
         alinear = new DefaultTableCellRenderer();
         alinear.setHorizontalAlignment(SwingConstants.CENTER);
-        modelo.addColumn("ID");
-        modelo.addColumn("Cant.");
+        modelo.addColumn("Cantidad");
         modelo.addColumn("Producto");
         modelo.addColumn("Total");
 
         listaTabla.setModel(modelo);
 
-        listaTabla.getColumnModel().getColumn(0).setMaxWidth(30);
-        listaTabla.getColumnModel().getColumn(1).setMaxWidth(45);
-        listaTabla.getColumnModel().getColumn(3).setMaxWidth(60);
-        listaTabla.getColumnModel().getColumn(3).setCellRenderer(alinear);
+        listaTabla.getColumnModel().getColumn(0).setMaxWidth(70);
+        listaTabla.getColumnModel().getColumn(2).setMaxWidth(70);
+        listaTabla.getColumnModel().getColumn(2).setCellRenderer(alinear);
         listaTabla.setRowHeight(18);
     }
 

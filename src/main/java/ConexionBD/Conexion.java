@@ -1,6 +1,7 @@
 package ConexionBD;
 
 import java.sql.*;
+import javax.sql.DataSource;
 
 /**
  *
@@ -12,11 +13,31 @@ public class Conexion {
     private static String puerto = "3306";
     private static String nombreBD = "computo";
 
-    private static final String url = "jdbc:mysql://" + direccionIP + ":" + puerto + "/" + nombreBD + "?useSSL=false&useTimezone=true&serverTimezone=UTC&allowPublicKeyRetrieval=true";
+    private static final String url = "jdbc:mysql://" + direccionIP + ":" + puerto + "/" + nombreBD + "?useTimezone=true&serverTimezone=UTC";
     private static final String user = "root";
     private static final String pass = "admin";
 
-    public static Connection getConnection() {
+    private DataSource dataSource;
+
+    /*public static Connection getConnection() {
+
+        Connection con = null;
+        var pooledDataSource = new ComboPooledDataSource();
+        pooledDataSource.setJdbcUrl(url);
+        pooledDataSource.setUser(user);
+        pooledDataSource.setPassword(pass);
+        pooledDataSource.setMaxPoolSize(10);
+
+        try {
+            con = pooledDataSource.getConnection();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return con;
+
+    }*/
+
+    public static Connection getConnection()  {
         Connection con = null;
 
         try {
@@ -52,7 +73,11 @@ public class Conexion {
         }
     }
     
-   
-           
+    public static void verificarConexion() {
+        //Accedemos a  la base de datos, para precargar
+        Connection con = null;
+        con = Conexion.getConnection();
+        Conexion.close(con);
+    }
 
 }

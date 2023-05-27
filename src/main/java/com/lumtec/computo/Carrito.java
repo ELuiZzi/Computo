@@ -5,6 +5,7 @@ import java.util.List;
 
 public class Carrito {
 
-    public static List<String[]> carrito = new ArrayList<>();
+    public static List<String[]> carrito = new ArrayList();
+    
 
 }

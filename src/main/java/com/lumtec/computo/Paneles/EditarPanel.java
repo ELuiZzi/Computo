@@ -4,10 +4,12 @@ import com.lumtec.computo.Colors;
 import com.lumtec.computo.Imagenes.Images;
 import com.lumtec.computo.Inventario.*;
 import com.lumtec.computo.Producto;
-import ConexionBD.Conexion;
+import com.lumtec.computo.Go;
+import com.lumtec.computo.HerramientasTabla;
 import java.awt.event.KeyEvent;
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JTextField;
 import org.netbeans.lib.awtextra.AbsoluteConstraints;
 
 public class EditarPanel extends javax.swing.JPanel {
@@ -18,6 +20,8 @@ public class EditarPanel extends javax.swing.JPanel {
     private float priceWithIVA = 0;
     Producto prod = new Producto();
     AbsoluteConstraints posi = new AbsoluteConstraints(0, 0);
+    private String origen = null;
+    List<JTextField> listaCajasTexto;
 
     public EditarPanel() {
         initComponents();
@@ -41,6 +45,7 @@ public class EditarPanel extends javax.swing.JPanel {
         1° Iniciando con la caja de busqueda, poniendo el Forefround en negro 
         2° Llenando las cajas
          */
+        origen = "inventario";
         busquedaBox.setForeground(Colors.text);
         busquedaBox.setText(Integer.toString(prod.getIdProducto()));
         llenarCajas();
@@ -490,7 +495,6 @@ public class EditarPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_sliderPorcentajeStateChanged
 
     private void actualizarButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_actualizarButtonMouseClicked
-        Connection con = null;
 
         /*
         Verificar que el producto que estamos acutalizando es el mismo que esta escrito en la caja de busqueda.
@@ -500,40 +504,42 @@ public class EditarPanel extends javax.swing.JPanel {
 
         try {
             id = Integer.parseInt(busquedaBox.getText());
+            if (prod.getIdProducto() == id) {
+                prod.setNombreProducto(nombreProductoBox.getText());
+                prod.setMarca(marcaBox.getText());
+                prod.setModelo(modeloBox.getText());
+                prod.setColor(colorBox.getText());
+                prod.setDescripcion(descripcionBox.getText());
+                prod.setProvedor(provedorBox.getText());
+                prod.setGarantia(garantiaBox.getText());
+
+                //Precios
+                try {
+                    prod.setCantidad(Integer.parseInt(cantidadBox.getText()));
+                    prod.setPrecioCompra(Float.parseFloat(precioCompraBox.getText()));
+                    prod.setPrecioVenta(Float.parseFloat(precioVentaBox.getText()));
+                    prod.setGanancia(Float.parseFloat(gananciaBox.getText()));
+                    prod.setReinversion(Float.parseFloat(reinversionBox.getText()));
+                    prod.setPorcentajeGanancia(Float.parseFloat(porcentajeGananciaBox.getText()));
+                    prod.setPorcentajeReinversion(Float.parseFloat(porcentajeReinversionBox.getText()));
+                } catch (java.lang.NumberFormatException ex) {
+
+                }
+
+                inve.actualizar(prod);
+            } else {
+                /*
+            Abrir un cuadro de dialogo que nos pregunte si rellenar el proudcto actual, o cargar el producto que dice la caaja
+                 */
+            }
         } catch (NumberFormatException ex) {
             busquedaBox.setText("Error de Escritura");
             busquedaBox.setForeground(Colors.text);
-        }
+        } finally {
 
-        if (prod.getIdProducto() == id) {
-            prod.setNombreProducto(nombreProductoBox.getText());
-            prod.setMarca(marcaBox.getText());
-            prod.setModelo(modeloBox.getText());
-            prod.setColor(colorBox.getText());
-            prod.setDescripcion(descripcionBox.getText());
-            prod.setProvedor(provedorBox.getText());
-            prod.setGarantia(garantiaBox.getText());
-
-            //Precios
-            try {
-                prod.setCantidad(Integer.parseInt(cantidadBox.getText()));
-                prod.setPrecioCompra(Float.parseFloat(precioCompraBox.getText()));
-                prod.setPrecioVenta(Float.parseFloat(precioVentaBox.getText()));
-                prod.setGanancia(Float.parseFloat(gananciaBox.getText()));
-                prod.setReinversion(Float.parseFloat(reinversionBox.getText()));
-                prod.setPorcentajeGanancia(Float.parseFloat(porcentajeGananciaBox.getText()));
-                prod.setPorcentajeReinversion(Float.parseFloat(porcentajeReinversionBox.getText()));
-            } catch (java.lang.NumberFormatException ex) {
-
+            if (origen != null) {
+                Go.to(new InventarioPanel());
             }
-
-            con = Conexion.getConnection();
-            inve.actualizar(prod);
-            Conexion.close(con);
-        } else {
-            /*
-            Abrir un cuadro de dialogo que nos pregunte si rellenar el proudcto actual, o cargar el producto que dice la caaja
-             */
         }
 
 
@@ -840,7 +846,27 @@ public class EditarPanel extends javax.swing.JPanel {
 
         actualizarButton.setBackground(Colors.button);
 
+        vaciarCajas();
         //Métodos
         // ivaButton.add(Images.getIvaEnable(), posi);
+    }
+
+    private void vaciarCajas() {
+        listaCajasTexto = new ArrayList();
+        listaCajasTexto.add(busquedaBox);
+        listaCajasTexto.add(nombreProductoBox);
+        listaCajasTexto.add(marcaBox);
+        listaCajasTexto.add(modeloBox);
+        listaCajasTexto.add(colorBox);
+        listaCajasTexto.add(cantidadBox);
+        listaCajasTexto.add(provedorBox);
+        listaCajasTexto.add(precioCompraBox);
+        listaCajasTexto.add(precioVentaBox);
+        listaCajasTexto.add(gananciaBox);
+        listaCajasTexto.add(nombreProductoBox);
+        listaCajasTexto.add(nombreProductoBox);
+        listaCajasTexto.add(nombreProductoBox);
+
+        HerramientasTabla.vaciarCajasTexto(listaCajasTexto);
     }
 }

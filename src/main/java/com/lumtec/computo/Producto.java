@@ -1,5 +1,7 @@
 package com.lumtec.computo;
 
+import java.text.DecimalFormat;
+
 public class Producto {
 
     private int idProducto;
@@ -11,6 +13,7 @@ public class Producto {
     private double ganancia;
     private double porcentajeReinversion;
     private double reinversion;
+    private double totalCompra;
 
     private String nombreProducto;
     private String marca;
@@ -21,6 +24,33 @@ public class Producto {
     private String garantia;
 
     private boolean switchIva = false;
+
+    public Producto() {
+
+    }
+
+    public Producto(String nombre, String marca, String modelo, int cantidad, double precioVenta) {
+        this.nombreProducto = nombre;
+        this.marca = marca;
+        this.modelo = modelo;
+        this.cantidad = cantidad;
+        this.precioVenta = precioVenta;
+    }
+
+    public Producto(String nombre, String provedor, String modelo, int faltantes, double precioCompra, double totalCompra) {
+        this.nombreProducto = nombre;
+        this.provedor = provedor;
+        this.modelo = modelo;
+        this.cantidad = faltantes;
+        this.precioCompra = precioCompra;
+        this.totalCompra = totalCompra;
+    }
+
+    public Producto(String nombre, String modelo, double precioCompra) {
+        this.nombreProducto = nombre;
+        this.modelo = modelo;
+        this.precioCompra = precioCompra;
+    }
 
     public void reset() {
         this.setIdProducto(0);
@@ -40,12 +70,12 @@ public class Producto {
 
     public double calcularGanacia(int cantidad) {
         double ganaTotal = getGanancia() * cantidad;
-        return ganaTotal;
+        return FuncionesMatematicas.recortarDecimales(ganaTotal);
     }
 
     public double calcularReinversion(int cantidad) {
         double reinTotal = getReinversion() * cantidad;
-        return reinTotal;
+        return FuncionesMatematicas.recortarDecimales(reinTotal);
     }
 
     public int getIdProducto() {
@@ -65,7 +95,7 @@ public class Producto {
     }
 
     public double getPrecioCompra() {
-        return precioCompra;
+        return FuncionesMatematicas.recortarDecimales(this.precioCompra);
     }
 
     public void setPrecioCompra(double precioCompra) {
@@ -73,23 +103,23 @@ public class Producto {
     }
 
     public double getPrecioVenta() {
-        return precioVenta;
+        return FuncionesMatematicas.recortarDecimales(this.precioVenta);
     }
 
-    public void setPrecioVenta(float precioVenta) {
+    public void setPrecioVenta(double precioVenta) {
         this.precioVenta = precioVenta;
     }
 
     public double getPorcentajeGanancia() {
-        return porcentajeGanancia;
+        return FuncionesMatematicas.recortarDecimales(this.porcentajeGanancia);
     }
 
-    public void setPorcentajeGanancia(float porcentajeGanancia) {
+    public void setPorcentajeGanancia(double porcentajeGanancia) {
         this.porcentajeGanancia = porcentajeGanancia;
     }
 
     public double getGanancia() {
-        return ganancia;
+        return FuncionesMatematicas.recortarDecimales(this.ganancia);
     }
 
     public void setGanancia(double ganancia) {
@@ -97,15 +127,15 @@ public class Producto {
     }
 
     public double getPorcentajeReinversion() {
-        return porcentajeReinversion;
+        return FuncionesMatematicas.recortarDecimales(this.porcentajeReinversion);
     }
 
-    public void setPorcentajeReinversion(float porcentajeReinversion) {
+    public void setPorcentajeReinversion(double porcentajeReinversion) {
         this.porcentajeReinversion = porcentajeReinversion;
     }
 
     public double getReinversion() {
-        return reinversion;
+        return FuncionesMatematicas.recortarDecimales(this.reinversion);
     }
 
     public void setReinversion(double reinversion) {
@@ -174,6 +204,10 @@ public class Producto {
 
     public void setSwitchIva(boolean switchIva) {
         this.switchIva = switchIva;
+    }
+
+    public double getTotalCompra() {
+        return totalCompra;
     }
 
 }

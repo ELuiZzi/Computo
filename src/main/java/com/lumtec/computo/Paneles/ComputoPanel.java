@@ -222,7 +222,7 @@ public class ComputoPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_inventarioButtonMouseClicked
 
     private void finanzasButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_finanzasButtonMouseClicked
-        Go.to(Home.finanzasPanel);
+        Go.to(new FinanzasPanel());
     }//GEN-LAST:event_finanzasButtonMouseClicked
 
     private void venderButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_venderButtonMouseClicked
