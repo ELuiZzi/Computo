@@ -3,6 +3,8 @@ package com.lumtec.computo.infra.dao;
 import com.lumtec.computo.infra.model.Producto;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.swing.*;
 import java.util.List;
 
 public class ProductoDAOJDBC implements ProductoDAO {
@@ -34,6 +36,19 @@ public class ProductoDAOJDBC implements ProductoDAO {
 
     public Producto getProductoPorNombre(String nombre) {
         String jpql = "SELECT P FROM Producto AS P WHERE P.nombre= :nombre";
+        Producto producto = null;
+        try {
+            producto = em.createQuery(jpql, Producto.class).setParameter("nombre", nombre).getSingleResult();
+        } catch (NoResultException ex) {
+            JOptionPane.showMessageDialog(null, "El producto no se encuentra registrado");
+            throw new RuntimeException(ex);
+        }
+        return producto;
+    }
+
+    @Override
+    public Producto productoVentas(String nombre) {
+        String jpql = "SELECT NEW com.lumtec.computo.infra.model.Producto(P.modelo, P.precioVenta) FROM Producto AS P WHERE P.nombre= :nombre";
         return em.createQuery(jpql, Producto.class).setParameter("nombre", nombre).getSingleResult();
     }
 

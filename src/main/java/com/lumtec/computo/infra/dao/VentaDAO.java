@@ -1,19 +1,14 @@
 package com.lumtec.computo.infra.dao;
 
+import com.lumtec.computo.infra.model.Venta;
+
+import java.util.List;
+
 public interface VentaDAO {
 
-/*
-    public List<Venta> listarVentas();
-    
-    public List<Venta> listarVentasMensuales(String mes, String año);
+    public void vender(Venta venta);
 
-    public void vender(Producto producto, int cantidad);
+    public List<Venta> getVentasFinanzas();
+    public List<Venta> getVentasFinanzasMensual(String mes);
 
-    public String getTotalVendido(String mes, String año);
-
-    public String getGananciaTotal(String mes, String año);
-
-    public String getReinversionTotal(String mes, String año);
-    
-     public List<String> listadoFinanzas(String mes, String año);*/
 }

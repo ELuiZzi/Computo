@@ -14,6 +14,8 @@ public interface ProductoDAO {
 
     public Producto getProductoPorNombre(String nombre);
 
+    public Producto productoVentas(String nombre);
+
     public void actualizarProducto(Producto producto);
 
 }

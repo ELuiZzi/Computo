@@ -63,7 +63,7 @@ public class Shortcuts {
         
         nombre = model.getValueAt(modelIndex, 0).toString();
 
-        Go.to(new VenderPanel(0, nombre));
+        Go.to(new VenderPanel(nombre));
     }
 
 

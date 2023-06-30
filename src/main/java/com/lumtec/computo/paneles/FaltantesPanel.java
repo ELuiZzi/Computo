@@ -1,36 +1,30 @@
 package com.lumtec.computo.paneles;
 
+import com.lumtec.computo.controllers.FaltantesController;
 import com.lumtec.computo.infra.Colors;
 import com.lumtec.computo.infra.Go;
 import com.lumtec.computo.infra.HerramientasTabla;
 import com.lumtec.computo.infra.Shortcuts;
-import com.lumtec.computo.infra.dao.FaltantesDAO;
-import com.lumtec.computo.infra.dao.FaltantesDAOJDBC;
 import com.lumtec.computo.infra.model.ConexionMultiple;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
-import java.awt.*;
 import java.awt.event.KeyEvent;
 
 public class FaltantesPanel extends javax.swing.JPanel {
 
-    FaltantesDAO fal = new FaltantesDAOJDBC();
+    private final FaltantesController faltantesController;
     HerramientasTabla conf;
-    DefaultTableModel model;
-    DefaultTableCellRenderer Alinear = new DefaultTableCellRenderer();
-    private TableRowSorter<TableModel> tableRowSorter;
+
     Shortcuts sc = new Shortcuts();
 
-    Font Arial = new java.awt.Font("Arial", 0, 12);
 
     public FaltantesPanel() {
         initComponents();
         initOwnComponents();
 
+        faltantesController = new FaltantesController(this.tablaFaltantes, this.tablaProvedores);
+        faltantesController.cargarTablas();
     }
 
     @SuppressWarnings("unchecked")
@@ -164,42 +158,7 @@ public class FaltantesPanel extends javax.swing.JPanel {
 
     private void rellenarTabla() {
 
-        Alinear.setHorizontalAlignment(SwingConstants.CENTER);
 
-        model = new DefaultTableModel();
-
-        model.addColumn("Producto");
-        model.addColumn("Provedor");
-        model.addColumn("Modelo");
-        model.addColumn("Faltantes");
-        model.addColumn("Precio Compra");
-        model.addColumn("Total");
-
-        tableRowSorter = new TableRowSorter<>(model);
-        tablaFaltantes.setModel(model);
-        tablaFaltantes.setRowSorter(tableRowSorter);
-        tablaFaltantes.setFont(Arial);
-
-        tablaFaltantes.getColumnModel().getColumn(0).setMaxWidth(250);
-        tablaFaltantes.getColumnModel().getColumn(0).setMinWidth(250);
-        tablaFaltantes.getColumnModel().getColumn(0).setResizable(false);
-        tablaFaltantes.getColumnModel().getColumn(0).setCellRenderer(Alinear);
-        tablaFaltantes.getColumnModel().getColumn(1).setMaxWidth(60);
-        tablaFaltantes.getColumnModel().getColumn(1).setMinWidth(60);
-        tablaFaltantes.getColumnModel().getColumn(1).setResizable(false);
-        tablaFaltantes.getColumnModel().getColumn(1).setCellRenderer(Alinear);
-        tablaFaltantes.getColumnModel().getColumn(2).setMaxWidth(110);
-        tablaFaltantes.getColumnModel().getColumn(2).setMinWidth(110);
-        tablaFaltantes.getColumnModel().getColumn(2).setResizable(false);
-        tablaFaltantes.getColumnModel().getColumn(2).setCellRenderer(Alinear);
-        tablaFaltantes.getColumnModel().getColumn(3).setResizable(false);
-        tablaFaltantes.getColumnModel().getColumn(3).setCellRenderer(Alinear);
-        tablaFaltantes.getColumnModel().getColumn(4).setMaxWidth(70);
-        tablaFaltantes.getColumnModel().getColumn(4).setMinWidth(70);
-        tablaFaltantes.getColumnModel().getColumn(4).setResizable(false);
-        tablaFaltantes.getColumnModel().getColumn(4).setCellRenderer(Alinear);
-        tablaFaltantes.getColumnModel().getColumn(5).setCellRenderer(Alinear);
-        tablaFaltantes.setRowHeight(17);
 /*
         var faltantes = this.fal.listar();
 
@@ -218,16 +177,6 @@ public class FaltantesPanel extends javax.swing.JPanel {
 
     private void rellenarTablaProvedores() {
 
-        model = new DefaultTableModel();
-
-        model.addColumn("Provedor");
-        model.addColumn("Costo");
-        Alinear.setHorizontalAlignment(SwingConstants.CENTER);
-        tablaProvedores.setModel(model);
-        tablaFaltantes.setFont(new java.awt.Font("Arial", 0, 12));
-        tablaProvedores.getColumnModel().getColumn(0).setCellRenderer(Alinear);
-        tablaProvedores.getColumnModel().getColumn(1).setCellRenderer(Alinear);
-        
 
     }
 
@@ -263,8 +212,7 @@ public class FaltantesPanel extends javax.swing.JPanel {
     }
 
     private void rellenarTablas() {
-        
-        FaltantesDAO faltantesDAO = new FaltantesDAOJDBC();
+
 
         rellenarTabla();
         rellenarTablaProvedores();

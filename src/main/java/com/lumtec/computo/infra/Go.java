@@ -37,7 +37,7 @@ public class Go {
     }
 
     public void venderProductoSelec(int id, String nombre) {
-        p = new VenderPanel(id, nombre);
+        p = new VenderPanel(nombre);
         to(p);
     }
 }

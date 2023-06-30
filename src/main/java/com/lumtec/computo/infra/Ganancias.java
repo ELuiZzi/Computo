@@ -2,7 +2,7 @@ package com.lumtec.computo.infra;
 
 import java.math.BigDecimal;
 
-public class Ganancias {
+public abstract class Ganancias {
 
     //Este método recibe el precio de compra de un producto y te devuelve el porcentaje que se le debe de aumentar
     public static Integer getGanancia(BigDecimal price) {

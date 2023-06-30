@@ -1,20 +1,20 @@
 package com.lumtec.computo.paneles;
 
 
+import com.lumtec.computo.controllers.FinanzasController;
 import com.lumtec.computo.infra.ClipBoard;
 import com.lumtec.computo.infra.Colors;
 import com.lumtec.computo.infra.Tiempo;
 import com.lumtec.computo.infra.dao.VentaDAO;
-import com.lumtec.computo.infra.dao.VentaDAOJDBC;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.util.List;
 
 public class FinanzasPanel extends javax.swing.JPanel {
 
+    private final FinanzasController finanzasController;
 
-    DefaultTableModel modelVentas, modelVentaMensual;
+
     DefaultComboBoxModel modelBox;
     VentaDAO ventasDAO;
     String añoActual = Tiempo.getAño();
@@ -24,6 +24,9 @@ public class FinanzasPanel extends javax.swing.JPanel {
     public FinanzasPanel() {
         initComponents();
         initOwnComponents();
+        finanzasController = new FinanzasController(this.tablaVentas, tablaVentasMensual);
+
+        finanzasController.cargarTablas();
 
     }
 
@@ -353,58 +356,14 @@ public class FinanzasPanel extends javax.swing.JPanel {
     private javax.swing.JLabel ventasLabel;
     // End of variables declaration//GEN-END:variables
 
-    private void rellenarTablaVentas() {
-        modelVentas = new DefaultTableModel();
-
-        ventasDAO = new VentaDAOJDBC();
-
-        modelVentas.addColumn("Producto");
-        modelVentas.addColumn("Modelo");
-        modelVentas.addColumn("Fecha de Venta");
-        modelVentas.addColumn("Venta");
-
-        tablaVentas.setModel(modelVentas);
-
-        /*var listaVentas = ventasDAO.listarVentas();
-
-        listaVentas.forEach(venta -> modelVentas.addRow(
-                new Object[]{
-                    venta.getNombre(),
-                    venta.getModelo(),
-                    venta.getFecha(),
-                    venta.getTotalVenta()
-                }
-        )
-        );*/
-
-    }
+    
 
     private void rellenarTablaVentasMensual(String mes, String año) {
-        modelVentaMensual = new DefaultTableModel();
 
-        ventasDAO = new VentaDAOJDBC();
 
-        modelVentaMensual.addColumn("Producto");
-        modelVentaMensual.addColumn("Fecha de Venta");
-        modelVentaMensual.addColumn("Venta");
-        modelVentaMensual.addColumn("Reinversión");
-        modelVentaMensual.addColumn("Ganancia");
 
-        tablaVentasMensual.setModel(modelVentaMensual);
 
-       /* var listaVentas = ventasDAO.listarVentasMensuales(mes, año);
 
-        listaVentas.forEach(venta -> modelVentaMensual.addRow(
-                new Object[]{
-                    venta.getNombre(),
-                    venta.getFecha(),
-                    venta.getTotalVenta(),
-                    venta.getReinverson(),
-                    venta.getGanancia()
-                }
-        )
-        );
-*/
     }
 
     private void modelMesesComboBox() {
@@ -431,13 +390,13 @@ public class FinanzasPanel extends javax.swing.JPanel {
     }
 
     private void resetTabla() {
-        try {
+       /* try {
             while (0 <= modelVentaMensual.getRowCount()) {
                 modelVentaMensual.removeRow(0);
             }
         } catch (java.lang.ArrayIndexOutOfBoundsException ex) {
 
-        }
+        }*/
         seleccionarBoton.setEnabled(true);
         totalVendido_Label.setText("----------");
         reinversionLabel.setText("----------");
@@ -467,7 +426,7 @@ public class FinanzasPanel extends javax.swing.JPanel {
         tablaVentas.setSelectionBackground(Colors.textBoxActivated);
 
         //Tablas y MÃ©todos
-        rellenarTablaVentas();
+
 
         modelMesesComboBox();
         finanzasMesActual();

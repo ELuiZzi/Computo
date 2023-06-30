@@ -15,7 +15,6 @@ import com.lumtec.computo.utils.JPAUtils;
 import javax.persistence.EntityManager;
 import javax.swing.*;
 import java.math.BigDecimal;
-import java.util.List;
 
 public class EditarProductoController {
 
@@ -67,13 +66,15 @@ public class EditarProductoController {
 
         ProductoDAO productoDAO = new ProductoDAOJDBC(JPAUtils.getEntityManger());
 
-        producto = productoDAO.getProductoPorNombre(nombre);
 
-        llenarCajas(producto.getId().toString(), producto.getNombre(), producto.getMarca(), producto.getModelo(), producto.getCantidad().toString(), producto.getPrecioCompra().toString(), producto.getPrecioVenta().toString(), producto.getGanancia().toString(), producto.getReinversion().toString(), null, null, producto.getGanancia().add(producto.getReinversion()), producto.getDescripcion(), producto.getProvedor().toString(), producto.getGarantia());
+            producto = productoDAO.getProductoPorNombre(nombre);
+
+
+        llenarCajas(producto.getId().toString(), producto.getNombre(), producto.getMarca(), producto.getModelo(), producto.getCantidad().toString(), producto.getPrecioCompra().toString(), producto.getPrecioVenta().toString(), producto.getGanancia().toString(), producto.getReinversion().toString(), null, null, producto.getGanancia().add(producto.getReinversion()), producto.getDescripcion(), producto.getGarantia());
 
     }
 
-    private void llenarCajas(String id, String nombre, String marca, String modelo, String cantidad, String precioCompra, String precioVenta, String cantidadGanancia, String cantidadReinversion, String porcentajeGanancia, String porcentajeReinversion, BigDecimal porcentajeTotal, String descripcion, String provedor, String garantia) {
+    private void llenarCajas(String id, String nombre, String marca, String modelo, String cantidad, String precioCompra, String precioVenta, String cantidadGanancia, String cantidadReinversion, String porcentajeGanancia, String porcentajeReinversion, BigDecimal porcentajeTotal, String descripcion, String garantia) {
         busquedaBox.setText(id);
         nombreProductoBox.setText(nombre);
         marcaBox.setText(marca);
@@ -152,7 +153,7 @@ public class EditarProductoController {
     }
 
     private void funcionesPostAgregarProducto() {
-        llenarCajas("id", null, null, null, null, null, null, null, null, null, null, new BigDecimal("200"), null, null, null);
+        llenarCajas("id", null, null, null, null, null, null, null, null, null, null, new BigDecimal("200"), null, null);
         siguienteQuery();
     }
 

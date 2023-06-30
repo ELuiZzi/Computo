@@ -63,34 +63,10 @@ public class Producto {
         this.precioVenta = nuevoProductoDTO.precioVenta();
     }
 
-    public void reset() {
-        this.setId(0l);
-        this.setCantidad(0);
+    public Producto(String modelo, BigDecimal precioVenta) {
+        this.modelo = modelo;
 
-        this.setNombre(null);
-        this.setMarca(null);
-        this.setModelo(null);
-        this.setDescripcion(null);
-
-        this.setPrecioCompra(new BigDecimal(0));
-        this.setPrecioVenta(new BigDecimal(0));
-        this.setGanancia(new BigDecimal(0));
-        this.setReinversion(new BigDecimal(0));
-
-
+        this.precioVenta = precioVenta;
     }
-
-    public double calcularGanacia(int cantidad) {
-/*        double ganaTotal = getGanancia() * cantidad;
-        return FuncionesMatematicas.recortarDecimales(ganaTotal);*/
-        return 0;
-    }
-
-    public double calcularReinversion(int cantidad) {
-       /* double reinTotal = getReinversion() * cantidad;
-        return FuncionesMatematicas.recortarDecimales(reinTotal);*/
-        return 0;
-    }
-
 
 }
