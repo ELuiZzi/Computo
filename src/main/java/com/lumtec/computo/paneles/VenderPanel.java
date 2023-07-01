@@ -31,9 +31,11 @@ public class VenderPanel extends javax.swing.JPanel {
 
         initComponents();
         initOwnComponents();
+        idBox.setText(nombre);
         venderProductoController = new VenderProductoController(cantidadBox, listaTabla, idBox, modeloBox, precioBox, precioTotal);
         venderProductoController.modeloTabla();
         venderProductoController.cargarListaCarrito();
+        venderProductoController.cargarProducto();
         //Rellenar la tabla con el historial
 
         cantidadBox.requestFocus();

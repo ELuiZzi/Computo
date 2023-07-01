@@ -16,6 +16,7 @@ public class Home extends javax.swing.JFrame {
     JPanel menuIcon, minIcon;
     Images img = new Images();
     AbsoluteLayout layout = new AbsoluteLayout();
+    private final String version = "1.2.0";
 
 
     //Variables que almacenan las coordenadas originales al mover la ventana
@@ -313,7 +314,7 @@ public class Home extends javax.swing.JFrame {
 
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel4.setText("V. 1.1.0");
+        jLabel4.setText(version);
         Menu.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 412, 50, -1));
 
         background.add(Menu, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 210, 440));
