@@ -4,45 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8035c112-2829-46a0-8bd7-cffa0b3afb7c" name="Changes" comment="Creada la entidad de ventas">
-      <change afterPath="$PROJECT_DIR$/img/inventario.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/img/s.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/infra/stats/FinanzasStats.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/img/logo.png" beforeDir="false" afterPath="$PROJECT_DIR$/img/logo.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/controllers/CommonController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/controllers/CommonController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/controllers/EditarProductoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/controllers/EditarProductoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/controllers/FaltantesController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/controllers/FaltantesController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/controllers/FinanzasController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/controllers/FinanzasController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/controllers/InventarioController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/controllers/InventarioController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/controllers/NuevoProductoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/controllers/NuevoProductoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/controllers/VenderProductoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/controllers/VenderProductoController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/infra/Imagenes/Images.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/infra/Imagenes/Images.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/infra/Shortcuts.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/infra/Shortcuts.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/infra/dao/FaltantesDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/infra/dao/FaltantesDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/infra/dao/FaltantesDAOJDBC.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/infra/dao/FaltantesDAOJDBC.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/infra/dao/ProductoDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/infra/dao/ProductoDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/infra/dao/ProductoDAOJDBC.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/infra/dao/ProductoDAOJDBC.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/infra/dao/VentaDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/infra/dao/VentaDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/infra/dao/VentaDAOJDBC.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/infra/dao/VentaDAOJDBC.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/infra/dto/NuevoProductoDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/infra/dto/NuevoProductoDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/infra/model/Carrito.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/infra/model/Carrito.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/infra/model/ConexionMultiple.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/infra/model/Faltante.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/infra/model/Faltante.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/infra/model/Provedor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/infra/model/Provedor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/paneles/EditarPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/paneles/EditarPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/paneles/FaltantesPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/paneles/FaltantesPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/paneles/FinanzasPanel.form" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/paneles/FinanzasPanel.form" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/paneles/FinanzasPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/paneles/FinanzasPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/paneles/Home.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/paneles/Home.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/paneles/InventarioPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/paneles/InventarioPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/paneles/NuevoFaltantePanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/paneles/NuevoFaltantePanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/paneles/NuevoProductoPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/paneles/NuevoProductoPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/paneles/VenderPanel.form" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/paneles/VenderPanel.form" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/paneles/VenderPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/lumtec/computo/paneles/VenderPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/META-INF/persistence.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/META-INF/persistence.xml" afterDir="false" />
-    </list>
+    <list default="true" id="8035c112-2829-46a0-8bd7-cffa0b3afb7c" name="Changes" comment="Creada la entidad de ventas" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -56,6 +18,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -70,7 +37,7 @@
     </option>
   </component>
   <component name="ProjectId" id="2R7lvftq5IX1ZbLXtbFWtKYl8tI" />
-  <component name="ProjectLevelVcsManager">
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="ProjectViewState">
@@ -86,6 +53,9 @@
     "UI_DESIGNER_EDITOR_MODE.PaletteManager.STATE": "left",
     "UI_DESIGNER_EDITOR_MODE.UIDesignerToolWindowManager.STATE": "ToolWindow",
     "last_opened_file_path": "C:/Users/billi/Documents/Workspace/Computo",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
     "settings.editor.selected.configurable": "preferences.pluginManager"
   }
 }]]></component>
@@ -94,7 +64,7 @@
       <recent name="C:\Users\LuiZzi\Documents\Workspace\Computo\src\main\java\com\lumtec\computo\paneles" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.com.lumtec.computo.paneles.Home">
+  <component name="RunManager" selected="Application.Home">
     <configuration name="CommonController" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.lumtec.computo.controllers.CommonController" />
       <module name="Computo" />
@@ -172,7 +142,23 @@
       <option name="project" value="LOCAL" />
       <updated>1688063755076</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Creada la entidad de ventas">
+      <option name="closed" value="true" />
+      <created>1740107412549</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1740107412550</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Creada la entidad de ventas">
+      <option name="closed" value="true" />
+      <created>1740107627226</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1740107627226</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -202,12 +188,12 @@
           <option name="timeStamp" value="6" />
         </breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/lumtec/computo/paneles/NuevoProductoPanel.java</url>
+          <url>file://$PROJECT_DIR$/src/main/java/com/lumtec/computo/Paneles/NuevoProductoPanel.java</url>
           <line>292</line>
           <option name="timeStamp" value="4" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/lumtec/computo/paneles/EditarPanel.java</url>
+          <url>file://$PROJECT_DIR$/src/main/java/com/lumtec/computo/Paneles/EditarPanel.java</url>
           <line>467</line>
           <option name="timeStamp" value="7" />
         </line-breakpoint>
